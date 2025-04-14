@@ -1,0 +1,22 @@
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# VSCode or PyCharm
+.vscode/
+.idea/
+
+# Django
+db.sqlite3
+/static/
+media/
+
+# MacOS & system
+.DS_Store
+
