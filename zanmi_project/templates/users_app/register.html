@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
-{% load socialaccount %}
 
 {% block title %}Join Zanmi{% endblock %}
 
@@ -43,7 +42,7 @@
                 <div class="mb-3 form-check d-flex align-items-center">
                     {{ form.consent|add_class:"form-check-input me-2" }}
                     <label for="id_consent" class="form-check-label mb-0 small">
-                        I agree to the <a href="{% url 'cgu' %}" target="_blank">Terms</a> & <a href="{% url 'confidentialite' %}" target="_blank">Privacy Policy</a>.
+                        I agree to the <a href="" target="_blank">Terms</a> & <a href="" target="_blank">Privacy Policy</a>.
                     </label>
                 </div>
                 <button type="submit" class="primary-btn w-100 mt-3">Create Account</button>
@@ -53,15 +52,7 @@
                 Already have an account? <a href="{% url 'login' %}" class="text-decoration-none">Log in</a>
             </div>
 
-            <div class="text-center mt-4">
-                <form action="{% provider_login_url 'google' %}" class="mt-4" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-danger w-100 google-btn">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google" style="height: 20px; margin-right: 10px;">
-                        Sign up with Google
-                    </button>
-                </form>
-            </div>
+
 
         </div>
     </div>
