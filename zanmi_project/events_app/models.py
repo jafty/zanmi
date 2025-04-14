@@ -13,3 +13,15 @@ class EventDB(models.Model):
 
     def __str__(self):
         return f"Event by {self.organizer.username} on {self.start_datetime}"
+
+
+class ParticipationDB(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey('EventDB', on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=[('PENDING', 'Pending'), ('ACCEPTED', 'Accepted'), ('REJECTED', 'Rejected')])
+    payment_id = models.CharField(max_length=255, blank=True, null=True)
+    message = models.TextField(blank=True, default="")
+
+    class Meta:
+        unique_together = ('user', 'event')
+

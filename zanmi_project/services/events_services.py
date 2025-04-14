@@ -7,7 +7,11 @@ from domain.repositories.event_repository import EventRepository
 from services.events_queries import *
 
 
-# services/events_services.py
+class FakePaymentGateway:
+    def create_payment(self, user, event, amount_cents):
+        return f"fake_payment_for_{user.username}_{event.start_datetime}"
+
+
 def create_event(
     start_datetime,
     organizer,
