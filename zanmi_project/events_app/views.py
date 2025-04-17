@@ -1,61 +1,113 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
-from services.events_services import join_event, get_event_detail, can_manage
-from services.events_queries import get_user_event_status
+from services.use_cases import accept_participation, get_event_detail, get_profile_detail, is_unrelated_to_event, get_user_participation, get_pending_participations, create_participation
 from .forms import ParticipationForm
 from domain.user import User as DomainUser
-from .repositories import DjangoEventRepository, DjangoParticipationRepository
+from domain.event import Participation
+from .repositories import DjangoEventRepository, DjangoParticipationRepository, DjangoUserProfileRepository
 from django.contrib.auth.decorators import login_required
-
-
-def to_domain_user(django_user):
-    return DomainUser(username=django_user.username)
-
-
-class FakePaymentGateway:
-    def create_payment(self, user, event, amount_cents):
-        # Dans une vraie intégration, tu appellerais Stripe ou autre ici
-        return f"fake_payment_for_{user.username}_{event.start_datetime.strftime('%Y%m%d')}"
+from .stub_payment_gateway import StubPaymentGateway
+from .forms import ParticipationForm
+from django.views.decorators.http import require_POST
 
 
 @login_required
 def event_detail(request, event_id):
-    repo = DjangoEventRepository()
+    user = request.user
+    print("DOMAIN USER")
+    print(user.username)
+    domain_user = DomainUser(username=user.username)
+    event_repo = DjangoEventRepository()
     participation_repo = DjangoParticipationRepository()
-    domain_event = get_event_detail(event_id, repo)
-    domain_user = DomainUser(username=request.user.username)
+    event = get_event_detail(event_id, repo=event_repo)
+    print("ORGA")
+    print(event.organizer.username)
+    db_participation = get_user_participation(user.id, event_id, participation_repo)
+    if db_participation:
+        domain_participation = Participation(
+            user=domain_user,
+            event=event,
+            status=db_participation.status,
+            payment_id=db_participation.payment_id,
+            message=db_participation.message
+        )
+    else:
+        domain_participation = None
+    is_manager = event.is_manageable_by(domain_user)
+    if is_manager:
+        pending_participants = get_pending_participations(event_id, participation_repo)
+    else:
+        pending_participants = None
+    is_unrelated = is_unrelated_to_event(domain_user, event, [domain_participation] if domain_participation else [])
     form = ParticipationForm()
-    if request.method == "POST":
-        form = ParticipationForm(request.POST)
-        if form.is_valid():
-            message = form.cleaned_data.get("message", "")
-            existing = participation_repo.get_existing_participation(request.user.id, event_id)
-
-            if not existing:
-                participation = join_event(
-                    user=domain_user,
-                    event=domain_event,
-                    existing_participations=[],  # Tu pourras remplacer ça plus tard
-                    payment_gateway=FakePaymentGateway(),
-                    message=message
-                )
-                participation_repo.save_participation(participation)
-                return redirect("event_detail", event_id=event_id)
-
-    # Get updated status (e.g. accepted, rejected, etc.)
-    participation = participation_repo.get_existing_participation(request.user.id, event_id)
-    status = get_user_event_status(domain_user, domain_event, participation)
-
-    return render(request, 'events_app/event_detail.html', {
+    return render(request, "events_app/event_detail.html", {
+        "event": event,
+        "is_manager": is_manager,
+        "is_unrelated": is_unrelated,
+        "is_accepted": domain_participation.is_accepted() if domain_participation else False,
+        "is_rejected": domain_participation.is_rejected() if domain_participation else False,
+        "is_pending": domain_participation.is_pending() if domain_participation else False,
+        "is_past": event.is_past(datetime.now()),
         "event_id": event_id,
-        "event": domain_event,
-        "user_status": status,
-        "is_accepted": status == "ACCEPTED",
-        "is_pending": status == "PENDING",
-        "is_rejected": status == "REJECTED",
-        "can_manage": can_manage(domain_user, domain_event),
-        "is_not_joinable": domain_event.is_past(now=datetime.now()),
+        "pending_participants": pending_participants,
         "form": form,
-        "pending_participants": [],  # À connecter si besoin
-        "unread_notifications_count": 0  # Idem
     })
+
+
+@login_required
+def join_event(request, event_id):
+    form = ParticipationForm(request.POST)
+    event_repo = DjangoEventRepository()
+    participation_repo = DjangoParticipationRepository()
+    if not form.is_valid():
+        return redirect("event_detail", event_id=event_id)
+    event = get_event_detail(event_id, repo=event_repo)
+    domain_user = DomainUser(username=request.user.username)
+    existing = get_user_participation(request.user.id, event_id, participation_repo)
+    if existing:
+        return redirect("event_detail", event_id=event_id)  # Or show a flash message?
+    participation = event.add_participation(
+        user=domain_user,
+        payment_gateway=StubPaymentGateway(),  # Replace later
+        message=form.cleaned_data["message"]
+    )
+    if not participation:
+        return render(request, "events_app/payment_failed.html")
+    # Save participation
+    create_participation(participation, participation_repo)
+    return redirect("event_detail", event_id=event_id)
+
+
+@require_POST
+@login_required
+def manage_participation(request, event_id):
+    action = request.POST.get("action")
+    target_user_id = request.POST.get("user_id")
+    if not action or not target_user_id:
+        return redirect("event_detail", event_id=event_id)
+    event_repo = DjangoEventRepository()
+    participation_repo = DjangoParticipationRepository()
+    payment_gateway = StubPaymentGateway()
+    domain_organizer = DomainUser(username=request.user.username)
+    event = get_event_detail(event_id, repo=event_repo)
+    if not event.is_manageable_by(domain_organizer):
+        return redirect("event_detail", event_id=event_id)
+    db_participation = get_user_participation(user_id=target_user_id, event_id=event_id, repo=participation_repo)
+    if not db_participation:
+        return redirect("event_detail", event_id=event_id)
+    domain_user = DomainUser(username=db_participation.user.username)
+    domain_participation = Participation(
+        user=domain_user,
+        event=event,
+        status=db_participation.status,
+        payment_id=db_participation.payment_id,
+        message=db_participation.message
+    )
+    if action == "accept":
+        updated = accept_participation(domain_organizer, domain_participation, payment_gateway)
+    elif action == "reject":
+        print("Reject to do later")
+    else:
+        return redirect("event_detail", event_id=event_id)  
+    participation_repo.save_participation(updated)
+    return redirect("event_detail", event_id=event_id)

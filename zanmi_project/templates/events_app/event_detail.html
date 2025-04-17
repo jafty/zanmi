@@ -58,7 +58,7 @@
                     <p>{{ event.description|safe }}</p>
 
                 </div>
-                {% if can_manage %}
+                {% if is_manager %}
                 <!-- SECTION : Demandes en attente -->
                 <div class="description-card">
                     <h2 class="pixel-text">Pending Requests</h2>
@@ -69,7 +69,7 @@
                                 <img src="{{ p.user.profile.avatar.url }}" alt="Avatar" class="participant-avatar" />
                                 <div class="participant-details">
                                     <h4>
-                                        <a href="{% url 'profile' p.user.username %}">
+                                        <a href="{% url 'profile_by_username' p.user.username %}">
                                           {{ p.user.username }}
                                         </a>
                                       </h4>
@@ -83,7 +83,7 @@
                                 </div>
                             </div>
                             <div class="participant-actions">
-                                <form method="post" action="">
+                                <form method="post" action="{% url 'manage_participation' event_id %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="user_id" value="{{ p.user.id }}">
                                     <button type="submit" name="action" value="accept" class="accept-btn">Accept</button>
@@ -103,7 +103,7 @@
             <!-- Right Column: Join Form -->
             <div class="col-lg-4">
                 <div class="join-form-card">
-                    {% if can_manage %}
+                    {% if is_manager %}
                         <h2 class="pixel-text">🎤 You're the Host!</h2>
                         <p>Welcome back, chief. You can manage requests just below 👇</p>
 
@@ -129,7 +129,7 @@
                                 Sign Up & Join
                             </a>
                         {% else %}
-                            <form method="post" action="{% url 'event_detail' event_id %}">
+                            <form method="post" action="{% url 'join_event' event_id %}">
                                 {% csrf_token %}
                                 {{ form.non_field_errors }}
                                 <div class="mb-3">

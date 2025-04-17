@@ -1,12 +1,18 @@
-from django import forms
+# events_app/forms.py
 
-class ParticipationForm(forms.Form):
-    message = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Say hi to the host! Let them know why you’d like to join.',
-            'rows': 3,
-            'class': 'form-control'
-        }),
-        label="Message (optional)"
-    )
+from django import forms
+from .models import ParticipationDB
+
+class ParticipationForm(forms.ModelForm):
+    class Meta:
+        model = ParticipationDB
+        fields = ["message"]
+        widgets = {
+            "message": forms.Textarea(attrs={
+                "rows": 3,
+                "placeholder": "Write a message for the host..."
+            }),
+        }
+        labels = {
+            "message": "Your message to the host"
+        }

@@ -6,4 +6,7 @@ class ParticipationRepository(ABC):
     def save_participation(self, participation): pass
 
     @abstractmethod
-    def get_existing_participation(self, user, event): pass
+    def get_existing_participation(self, user_id, event_id): pass
+
+    @abstractmethod
+    def get_pending_participations(self, event_id): pass

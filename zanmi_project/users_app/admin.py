@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import UserProfileDB
 
-# Register your models here.
+@admin.register(UserProfileDB)
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('user', 'description')
+
