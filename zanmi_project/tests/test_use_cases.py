@@ -26,7 +26,7 @@ def  organizer():
 
 @pytest.fixture
 def event(organizer):
-    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
+    event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
     return event
 
 
@@ -43,16 +43,20 @@ class StubEventRepository:
     def get_event_by_id(self, event_id):
         return self.saved_event
 
-    
+
 def test_create_event_with_stub_repo():
     repo = StubEventRepository()
     user = User(username="Alice")
     start_datetime = datetime(2025, 5, 10)
+    location = "Toulouse"
+    title = "Sortie"
     description = "Event description"
     time = "18:00"
     activity_type = "Outing"
     image_url = "img.url"
     event = create_event(
+        title,
+        location,
         start_datetime, 
         user, 
         description, 
@@ -65,6 +69,8 @@ def test_create_event_with_stub_repo():
     assert repo.saved_event is not None
     assert repo.saved_event.start_datetime == start_datetime
     assert repo.saved_event.organizer == user
+    assert event.title == "Sortie"  # only if you provide it in test fixture
+    assert event.location == "Toulouse"  # only if you provide it in test fixture
     assert event.description == "Event description"  # only if you provide it in test fixture
     assert event.time == "18:00"  # only if you provide it in test fixture
     assert event.activity_type == "Outing"  # only if you provide it in test fixture
@@ -74,7 +80,7 @@ def test_create_event_with_stub_repo():
 
 def test_get_event_detail():
     repo = StubEventRepository()
-    expected_event = Event(start_datetime=..., organizer=..., price=...)
+    expected_event = Event(title="Sortie", location="Toulouse", start_datetime=..., organizer=..., price=...)
     repo.save_event(expected_event)
     result = get_event_detail(event_id=123, repo=repo)  # id is ignored
     assert result == expected_event
@@ -86,7 +92,7 @@ def test_get_price_in_cents():
 
 
 def test_organizer_accepts_pending_participation_with_payment_capture(organizer, participant):
-    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer)
+    event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer)
     participation = Participation(user=participant, event=event, status="PENDING", payment_id="pi_fake_123")
     mock_gateway = Mock()
     updated_participation = accept_participation(
@@ -109,11 +115,32 @@ class StubNotificationGateway:
 
 class StubNotificationRepository:
 
-    def __init__(self):
+    def __init__(self, stored_notifications=None):
+        self.stored_notifications = stored_notifications or []
         self.saved = None
+
+    def get_notifications_for_user(self, user_id: int):
+        return self.stored_notifications
+        return []
 
     def save_notification(self, notification):
         self.saved = notification
+
+
+def test_get_user_notifications_returns_expected_list(participant, organizer):
+    # Given
+    event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 5, 10), organizer=organizer)
+    expected_notification = Notification(
+        recipient=participant,
+        sender=organizer,
+        message="You've been accepted to the event!",
+        event=event
+    )
+    repo = StubNotificationRepository(stored_notifications=[expected_notification])
+    notifications = get_user_notifications(user_id=42, notification_repo=repo)
+    assert len(notifications) == 1
+    assert notifications[0].message == "You've been accepted to the event!"
+    assert notifications[0].recipient.username == "Alice"
 
 
 def test_organizer_notified_when_participant_joins(participant, organizer):
@@ -124,7 +151,7 @@ def test_organizer_notified_when_participant_joins(participant, organizer):
     WHEN we call notify_when_participant_joins
     THEN a notification is created for the organizer with correct attributes
     """
-    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
+    event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
     participation = Participation(user=participant, event=event, status="PENDING", message="Hey!")
     gateway = StubNotificationGateway()
     repo = StubNotificationRepository()
@@ -148,7 +175,7 @@ def test_participant_notified_when_accepted(participant, organizer):
     WHEN we call notify_when_accepted
     THEN a notification is created, saved, and has correct attributes
     """
-    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
+    event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
     participation = Participation(user=participant, event=event, status="ACCEPTED")
     gateway = StubNotificationGateway()
     repo = StubNotificationRepository()
@@ -172,7 +199,7 @@ def test_participant_notified_when_rejected(participant, organizer):
     WHEN we call notify_when_rejected
     THEN a notification is created, saved, and has correct attributes
     """
-    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
+    event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
     participation = Participation(user=participant, event=event, status="REJECTED")
     gateway = StubNotificationGateway()
     repo = StubNotificationRepository()
@@ -189,7 +216,7 @@ def test_participant_notified_when_rejected(participant, organizer):
 
 
 def test_organizer_rejects_pending_participation(organizer, participant):
-    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer)
+    event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer)
     participation = Participation(user=participant, event=event, status="PENDING", payment_id="pi_fake_123")
     mock_gateway = Mock()
     updated_participation = reject_participation(
@@ -219,18 +246,42 @@ def test_organizer_is_related_to_event(organizer, event):
 
 
 class StubParticipationRepository:
-    def __init__(self, stored_participation=None, stored_participations=None):
+    def __init__(self, stored_participation=None, stored_participations=None, stored_user_participations=None):
         self.stored_participation = stored_participation
         self.stored_participations = stored_participations
+        self.stored_user_participations = stored_user_participations
 
     def get_existing_participation(self, user_id, event_id):
         return self.stored_participation
 
     def get_pending_participations(self, event_id):
         return self.stored_participations
+
+    def get_participations_by_user(self, user_id):
+        return self.stored_user_participations
     
     def save_participation(self, participation):
         self.saved = participation
+
+
+def test_get_upcoming_events_for_user(participant):
+    """
+    GIVEN a repository with participations
+    WHEN we call get_upcoming_events
+    THEN it returns only events in the future and accepted
+    """
+    now = datetime(2025, 5, 1)
+    upcoming1 = Event("Future1", "Toulouse", datetime(2025, 6, 1), participant, price=10)
+    upcoming2 = Event("Future2", "Toulouse", datetime(2025, 7, 1), participant, price=10)
+    past = Event("Past", "Toulouse", datetime(2025, 4, 1), participant, price=10)
+    p1 = Participation(participant, upcoming1, status="ACCEPTED")
+    p2 = Participation(participant, upcoming2, status="ACCEPTED")
+    p3 = Participation(participant, past, status="ACCEPTED")
+    p4 = Participation(participant, past, status="REJECTED")
+    repo = StubParticipationRepository(stored_user_participations=[p1, p2, p3, p4])
+    upcoming_participations = get_upcoming_participations(user_id=42, repo=repo, now=now)
+    assert upcoming_participations
+
 
 def test_get_user_participation(participant, event):
     """

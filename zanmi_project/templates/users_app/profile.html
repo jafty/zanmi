@@ -75,11 +75,11 @@
                         {% for p in upcoming_events %}
                             <div class="event-card">
                                 <div class="event-card-image">
-                                    <img src="{{ p.event.image }}">
+                                    <img src="{{ p.image_url }}">
                                 </div>
                                 <div class="event-card-content">
-                                    <h3>{{ p.event.title }}</h3>
-                                    <p class="event-date">{{ p.event.start_datetime|date:"F j, Y, g:i a" }}</p>
+                                    <h3><a href="{% url 'event_detail' p.id %}">{{ p.title }}</a></h3>
+                                    <p class="event-date">{{ p.start_datetime|date:"F j, Y, g:i a" }}</p>
                                     <span class="event-status">Upcoming</span>
                                 </div>
                             </div>
@@ -95,11 +95,11 @@
                         {% for p in past_events %}
                             <div class="event-card">
                                 <div class="event-card-image">
-                                    <img src="{{ p.event.image.url }}">
+                                    <img src="{{ p.image_url }}">
                                 </div>
                                 <div class="event-card-content">
-                                    <h3>{{ p.event.title }}</h3>
-                                    <p class="event-date">{{ p.event.date|date:"F j, Y, g:i a" }}</p>
+                                    <h3><a href="{% url 'event_detail' p.id %}">{{ p.title }}</a></h3>
+                                    <p class="event-date">{{ p.start_datetime|date:"F j, Y, g:i a" }}</p>
                                     <span class="event-status past">Past</span>
                                 </div>
                             </div>

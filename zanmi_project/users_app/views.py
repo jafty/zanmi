@@ -3,9 +3,10 @@ from django.shortcuts import render, redirect
 from .forms import UserProfileForm, CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 from domain.user import User as DomainUser
-from services.use_cases import get_profile_detail, create_or_update_user_profile
+from services.use_cases import get_profile_detail, create_or_update_user_profile, get_upcoming_participations, get_past_participations
 from .repositories import DjangoUserProfileRepository
-from datetime import date
+from events_app.repositories import DjangoParticipationRepository, DjangoEventRepository
+from datetime import date, datetime
 
 
 def register_view(request):
@@ -26,7 +27,7 @@ def register_view(request):
                 is_certified=False
             )
             login(request, user)
-            return redirect("event_detail", event_id=1)  # or secret event
+            return redirect("featured_event") 
     else:
         form = CustomUserCreationForm()
 
@@ -36,6 +37,7 @@ def register_view(request):
 @login_required
 def profile(request, username=None):
     repo = DjangoUserProfileRepository()
+    participation_repo = DjangoParticipationRepository()
     current_user = DomainUser(username=request.user.username)
     if not username or username == request.user.username:
         target_user = current_user
@@ -54,8 +56,14 @@ def profile(request, username=None):
     profile = get_profile_detail(user_id=target_user_id, repo=repo)
     age = profile.get_age(date.today())
     interest_list = [i.strip() for i in profile.centers_of_interest.split(",") if i.strip()]
-    upcoming_events = []  # To be replaced with real logic
-    past_events = []
+    now = datetime.now()
+    event_repo = DjangoEventRepository()
+    upcoming_events = get_upcoming_participations(target_user_id, participation_repo, now)
+    for event in upcoming_events:
+        event.id = event_repo.get_event_id(event)
+    past_events = get_past_participations(target_user_id, participation_repo, now)
+    for event in past_events:
+        event.id = event_repo.get_event_id(event)
     events_attended_count = len(past_events)
     upcoming_events_count = len(upcoming_events)
     return render(request, "users_app/profile.html", {

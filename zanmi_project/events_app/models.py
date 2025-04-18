@@ -3,6 +3,8 @@ from django.db import models
 from django.conf import settings
 
 class EventDB(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True, unique=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
     start_datetime = models.DateTimeField()
     organizer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=8, decimal_places=2)
@@ -25,3 +27,11 @@ class ParticipationDB(models.Model):
     class Meta:
         unique_together = ('user', 'event')
 
+
+class NotificationDB(models.Model):
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_notifications")
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_notifications")
+    message = models.TextField()
+    event = models.ForeignKey(EventDB, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)

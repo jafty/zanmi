@@ -31,7 +31,7 @@
                         <div class="meta-item">
                             <img src="https://api.iconify.design/mdi:map-marker.svg" alt="Location">
                             <span>
-                                {% if is_accepted %}
+                                {% if is_manager or is_accepted %}
                                     {{ event.location }}
                                 {% else %}
                                     Hidden until booking

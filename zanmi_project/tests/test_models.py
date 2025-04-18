@@ -18,7 +18,7 @@ def event():
     user = User("Alice")
     event_date = datetime(2025, 4, 11)
     organizer = User("Host")
-    event = Event(event_date, organizer, price=25.0)
+    event = Event(title="Sortie", location="Toulouse", start_datetime=event_date, organizer=organizer, price=25.0)
     return event
 
 
@@ -118,7 +118,7 @@ def test_user_status_is_not_rejected(participant, event):
 
 def test_user_status_is_organizer():
     organizer = User(username="Host")
-    event = Event(organizer=User(username="Host"), start_datetime=datetime(2025,4,16))
+    event = Event(title="Sortie", location="Toulouse", organizer=User(username="Host"), start_datetime=datetime(2025,4,16))
 
     status = event.is_manageable_by(organizer)
     assert status == True

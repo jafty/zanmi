@@ -5,6 +5,7 @@ from domain.notification import Notification
 from domain.repositories.event_repository import EventRepository
 from domain.repositories.user_profile_repository import UserProfileRepository
 from domain.repositories.participation_repository import ParticipationRepository
+from domain.repositories.notification_repository import NotificationRepository  
 
 from services.queries import *
 from services.use_cases import *
@@ -18,6 +19,8 @@ class FakePaymentGateway:
 
 
 def create_event(
+    title,
+    location,
     start_datetime,
     organizer,
     description,
@@ -28,6 +31,8 @@ def create_event(
     image_url=""
 ):
     event = Event(
+        title=title,
+        location=location,
         start_datetime=start_datetime,
         organizer=organizer,
         price=price,
@@ -49,6 +54,13 @@ def accept_participation(organizer: User, participation: Participation, payment_
         payment_gateway.capture(participation.payment_id)
         participation.accept()
         return participation
+
+
+def reject_participation(organizer: User, participation: Participation, payment_gateway):
+    if participation.payment_id and payment_gateway:
+        payment_gateway.cancel(participation.payment_id)
+    participation.reject()
+    return participation
 
 
 def notify_when_accepted(participation: Participation, notification_gateway, notification_repo):
@@ -87,11 +99,8 @@ def notify_when_participant_joins(participation: Participation, notification_gat
     notification_repo.save_notification(notification)
 
 
-def reject_participation(organizer: User, participation: Participation, payment_gateway):
-    if participation.payment_id and payment_gateway:
-        payment_gateway.cancel(participation.payment_id)
-    participation.reject()
-    return participation
+def get_user_notifications(user_id: int, notification_repo: NotificationRepository):
+    return notification_repo.get_notifications_for_user(user_id)
 
 
 def is_unrelated_to_event(user: User, event: Event, participations):
@@ -106,8 +115,20 @@ def is_unrelated_to_event(user: User, event: Event, participations):
 def get_user_participation(user_id: int, event_id: int, repo: ParticipationRepository) -> Participation | None:
     return repo.get_existing_participation(user_id, event_id)
 
+
 def get_pending_participations(event_id: int, repo: ParticipationRepository) -> Participation | None:
     return repo.get_pending_participations(event_id)
+
+
+def get_upcoming_participations(user_id, repo, now):
+    participations = repo.get_participations_by_user(user_id)
+    return [p.event for p in participations if p.status == "ACCEPTED" and not p.event.is_past(now)]
+
+
+def get_past_participations(user_id, repo, now):
+    participations = repo.get_participations_by_user(user_id)
+    return [p.event for p in participations if p.status == "ACCEPTED" and p.event.is_past(now)]
+
 
 def create_participation(participation: Participation, repo: ParticipationRepository) -> Participation | None:
     return repo.save_participation(participation)

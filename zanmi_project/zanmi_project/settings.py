@@ -26,9 +26,9 @@ SECRET_KEY = "django-insecure-rece&=h=tj5r#(pwl^7=biar+p$7qbnclp!**zym(xx1il45-+
 DEBUG = True
 
 #Proper to pythonanywhere
-ALLOWED_HOSTS = [
-'rafiky.pythonanywhere.com',
-]
+#ALLOWED_HOSTS = [
+#'rafiky.pythonanywhere.com',
+#]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
@@ -69,6 +69,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'events_app.context_processors.unread_notifications',
             ],
         },
     },
@@ -124,7 +125,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 # Proper to codespaces
-# STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
 # Default primary key field type
@@ -135,3 +136,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/featured_event/'

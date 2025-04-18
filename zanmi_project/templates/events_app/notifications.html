@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<section class="notifications-hero">
+    <div class="container">
+        <div class="notifications-header">
+            <h1 class="pixel-text">Notifications</h1>
+        </div>
+        <div class="notifications-container">
+            {% if notifications %}
+                {% for notification in notifications %}
+                    <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+                        <div class="notification-content">
+                            <a href="{% url 'profile_by_username' notification.sender.username %}" class="organizer-link">{{ notification.sender.username }}</a>
+                            {{ notification.message }}. Location: {{ notification.event.location }}
+                            
+                            for
+                            <a href="{% url 'event_detail' notification.event.id %}" class="organizer-link">
+                                {{ notification.event.title }}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-notifications">
+                    <img src="https://api.iconify.design/mdi:bell-outline.svg" alt="No notifications" class="empty-icon">
+                    <p>No notifications yet</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

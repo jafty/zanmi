@@ -6,6 +6,8 @@ from services.queries import get_price_in_cents
 class Event:
     def __init__(
         self,
+        title: str,
+        location: str,
         start_datetime: datetime,
         organizer: User,
         price: float = 0,
@@ -14,6 +16,8 @@ class Event:
         activity_type: str = "",
         image_url: str = ""
     ):
+        self.title = title
+        self.location = location
         self.start_datetime = start_datetime
         self.organizer = organizer
         self.price = price
