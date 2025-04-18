@@ -1,6 +1,7 @@
 from domain.user import User
 from domain.user_profile import UserProfile
 from domain.event import Event, Participation
+from domain.notification import Notification
 from domain.repositories.event_repository import EventRepository
 from domain.repositories.user_profile_repository import UserProfileRepository
 from domain.repositories.participation_repository import ParticipationRepository
@@ -48,6 +49,49 @@ def accept_participation(organizer: User, participation: Participation, payment_
         payment_gateway.capture(participation.payment_id)
         participation.accept()
         return participation
+
+
+def notify_when_accepted(participation: Participation, notification_gateway, notification_repo):
+    message = f"You have been accepted to the event on {participation.event.start_datetime.strftime('%Y-%m-%d')}!"
+    notification = Notification(
+        recipient=participation.user,
+        sender=participation.event.organizer,
+        message=message,
+        event=participation.event,
+    )
+    success = notification_gateway.send(notification)
+    notification_repo.save_notification(notification)
+
+
+def notify_when_rejected(participation: Participation, notification_gateway, notification_repo):
+    message = f"Unfortunately, you were rejected for the event on {participation.event.start_datetime.strftime('%Y-%m-%d')}."
+    notification = Notification(
+        recipient=participation.user,
+        sender=participation.event.organizer,
+        message=message,
+        event=participation.event,
+    )
+    success = notification_gateway.send(notification)
+    notification_repo.save_notification(notification)
+
+
+def notify_when_participant_joins(participation: Participation, notification_gateway, notification_repo):
+    message = f"{participation.user.username} has requested to join your event on {participation.event.start_datetime.strftime('%Y-%m-%d')}."
+    notification = Notification(
+        recipient=participation.event.organizer,
+        sender=participation.user,
+        message=message,
+        event=participation.event,
+    )
+    success = notification_gateway.send(notification)
+    notification_repo.save_notification(notification)
+
+
+def reject_participation(organizer: User, participation: Participation, payment_gateway):
+    if participation.payment_id and payment_gateway:
+        payment_gateway.cancel(participation.payment_id)
+    participation.reject()
+    return participation
 
 
 def is_unrelated_to_event(user: User, event: Event, participations):

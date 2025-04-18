@@ -90,8 +90,9 @@
                                     <input type="hidden" name="user_id" value="{{ p.user.id }}">
                                     <button type="submit" name="action" value="accept" class="accept-btn">Accept</button>
                                     <button type="submit" name="action" value="reject" class="reject-btn">Reject</button>
+                                    <p class="text-muted small mt-1">💸 Refund will be issued upon rejection</p>
                                 </form>
-                            </div>
+                            </div>                            
                         </div>
                         {% empty %}
                             <p>No pending requests.</p>

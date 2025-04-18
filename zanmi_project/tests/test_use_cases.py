@@ -33,6 +33,7 @@ def event(organizer):
 # EVENTS USE CASES
 # -----------
 class StubEventRepository:
+
     def __init__(self):
         self.saved_event = None
 
@@ -41,8 +42,8 @@ class StubEventRepository:
 
     def get_event_by_id(self, event_id):
         return self.saved_event
-    
 
+    
 def test_create_event_with_stub_repo():
     repo = StubEventRepository()
     user = User(username="Alice")
@@ -97,10 +98,107 @@ def test_organizer_accepts_pending_participation_with_payment_capture(organizer,
     mock_gateway.capture.assert_called_once_with("pi_fake_123")
 
 
-def test_organizer_rejects_pending_participation(participant, event, organizer):
-    participation = Participation(user=participant, event=event, status="PENDING")
-    participation.reject()
-    assert participation.status == "REJECTED"
+class StubNotificationGateway:
+
+    def send(self, notification: Notification):
+        self.recipient_user = notification.recipient
+        self.sender_name = notification.sender.username
+        self.event = notification.event
+        self.message = notification.message
+
+
+class StubNotificationRepository:
+
+    def __init__(self):
+        self.saved = None
+
+    def save_notification(self, notification):
+        self.saved = notification
+
+
+def test_organizer_notified_when_participant_joins(participant, organizer):
+    """
+    GIVEN a Participation with status 'PENDING'
+    AND a NotificationGateway that always succeeds
+    AND a NotificationRepository to store the notification
+    WHEN we call notify_when_participant_joins
+    THEN a notification is created for the organizer with correct attributes
+    """
+    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
+    participation = Participation(user=participant, event=event, status="PENDING", message="Hey!")
+    gateway = StubNotificationGateway()
+    repo = StubNotificationRepository()
+    notify_when_participant_joins(participation, gateway, repo)
+    saved = repo.saved
+    assert gateway.recipient_user == organizer
+    assert gateway.sender_name == participant.username
+    assert gateway.event == event
+    assert "requested" in gateway.message.lower() or "wants to join" in gateway.message.lower()
+    assert saved is not None
+    assert saved.recipient == organizer
+    assert saved.sender == participant
+    assert "join" in saved.message.lower()
+
+
+def test_participant_notified_when_accepted(participant, organizer):
+    """
+    GIVEN a Participation with status 'ACCEPTED'
+    AND a NotificationGateway that always succeeds
+    AND a NotificationRepository to store the notification
+    WHEN we call notify_when_accepted
+    THEN a notification is created, saved, and has correct attributes
+    """
+    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
+    participation = Participation(user=participant, event=event, status="ACCEPTED")
+    gateway = StubNotificationGateway()
+    repo = StubNotificationRepository()
+    notify_when_accepted(participation, gateway, repo)
+    saved = repo.saved
+    assert gateway.recipient_user == participant
+    assert gateway.sender_name == organizer.username
+    assert gateway.event == event
+    assert "accepted" in gateway.message.lower()
+    assert saved is not None
+    assert saved.recipient == participant
+    assert saved.sender == organizer
+    assert "accepted" in saved.message.lower()
+
+
+def test_participant_notified_when_rejected(participant, organizer):
+    """
+    GIVEN a Participation with status 'REJECTED'
+    AND a NotificationGateway that always succeeds
+    AND a NotificationRepository to store the notification
+    WHEN we call notify_when_rejected
+    THEN a notification is created, saved, and has correct attributes
+    """
+    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
+    participation = Participation(user=participant, event=event, status="REJECTED")
+    gateway = StubNotificationGateway()
+    repo = StubNotificationRepository()
+    notify_when_rejected(participation, gateway, repo)
+    saved = repo.saved
+    assert gateway.recipient_user == participant
+    assert gateway.sender_name == organizer.username
+    assert gateway.event == event
+    assert "rejected" in gateway.message.lower()
+    assert saved is not None
+    assert saved.recipient == participant
+    assert saved.sender == organizer
+    assert "rejected" in saved.message.lower()
+
+
+def test_organizer_rejects_pending_participation(organizer, participant):
+    event = Event(start_datetime=datetime(2025, 4, 20), organizer=organizer)
+    participation = Participation(user=participant, event=event, status="PENDING", payment_id="pi_fake_123")
+    mock_gateway = Mock()
+    updated_participation = reject_participation(
+        organizer=organizer,
+        participation=participation,
+        payment_gateway=mock_gateway
+    )
+    assert updated_participation.status == "REJECTED"
+    mock_gateway.cancel.assert_called_once_with("pi_fake_123")
 
 
 def test_user_is_unrelated_to_event(participant, event):
