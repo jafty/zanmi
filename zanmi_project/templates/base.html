@@ -25,8 +25,8 @@
     <!-- NAVIGATION (modifié pour correspondre exactement à ton design original) -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="">
-                <img src="" alt="Zanmi" class="me-2">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{% static 'images/logo.png' %}" alt="Zanmi" class="me-2">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -34,14 +34,7 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
                     {% if user.is_authenticated and user.username %}
-                    <!--<li class="nav-item position-relative">
-                        <a class="nav-link" href="">
-                            Notifications
-                            {% if unread_notifications_count > 0 %}
-                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                            {% endif %}
-                        </a>
-                    </li> -->
+
                                     <!-- Lien vers le profil -->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'profile' %}">Profile</a>
@@ -64,7 +57,7 @@
                         </form>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link download-btn">✨ Next hangout ✨</a>
+                        <a href="{% url 'featured_event' %}" class="nav-link download-btn">✨ Next hangout ✨</a>
                     </li>
                     {% else %}
                     <li class="nav-item ms-lg-3">

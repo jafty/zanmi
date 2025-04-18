@@ -11,8 +11,7 @@ from datetime import date, datetime
 
 def register_view(request):
     if request.user.is_authenticated:
-        return redirect("landing")
-
+        return redirect("featured_event")
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -27,10 +26,9 @@ def register_view(request):
                 is_certified=False
             )
             login(request, user)
-            return redirect("featured_event") 
+            return redirect("profile_edit") 
     else:
         form = CustomUserCreationForm()
-
     return render(request, "users_app/register.html", {"form": form})
 
 
@@ -109,7 +107,7 @@ def profile_edit(request):
                 group_size_preference=data["group_size_preference"],
                 dietary_restrictions=data["dietary_restrictions"],
             )
-            return redirect("profile")
+            return redirect("featured_event")
     else:
         form = UserProfileForm(initial={
             "city": domain_profile.city,

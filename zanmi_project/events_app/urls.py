@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import event_detail, join_event, manage_participation, notifications_view, featured_event
+from .views import event_detail, join_event, manage_participation, notifications_view, featured_event, landing
 from django.shortcuts import redirect
 
 
@@ -9,7 +9,7 @@ def home_redirect(request):
 
 
 urlpatterns = [
-    path('', home_redirect, name="home"),
+    path('', landing, name='landing'),  # Page d'accueil
     path("notifications/", notifications_view, name="notifications"),
     path('events/<int:event_id>/', event_detail, name='event_detail'),
     path("events/<int:event_id>/join/", join_event, name="join_event"),

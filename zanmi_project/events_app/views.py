@@ -26,6 +26,10 @@ from .forms import ParticipationForm
 from django.views.decorators.http import require_POST
 
 
+def landing(request):
+    return render(request, 'events_app/landing.html')
+
+
 login_required
 def featured_event(request):
     return redirect('event_detail', event_id=3)
