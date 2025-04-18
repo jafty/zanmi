@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
+
 {% load static %}
 
 {% block title %}{{ event.title }}{% endblock %}
@@ -134,7 +136,7 @@
                                 {{ form.non_field_errors }}
                                 <div class="mb-3">
                                     {{ form.message.label_tag }}
-                                    {{ form.message }}
+                                    {{ form.message|add_class:"form-control" }}
                                     {% if form.message.errors %}
                                         <div class="text-danger small">{{ form.message.errors }}</div>
                                     {% endif %}

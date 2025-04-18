@@ -26,10 +26,10 @@ SECRET_KEY = "django-insecure-rece&=h=tj5r#(pwl^7=biar+p$7qbnclp!**zym(xx1il45-+
 DEBUG = True
 
 #Proper to pythonanywhere
-#ALLOWED_HOSTS = [
-#'rafiky.pythonanywhere.com',
-#]
-#STATIC_ROOT = BASE_DIR / 'staticfiles'
+ALLOWED_HOSTS = [
+'rafiky.pythonanywhere.com',
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 
@@ -124,7 +124,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 # Proper to codespaces
-STATICFILES_DIRS = [BASE_DIR / "static"]
+# STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
 # Default primary key field type
