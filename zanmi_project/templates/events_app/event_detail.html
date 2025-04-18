@@ -122,7 +122,7 @@
                         <h2 class="pixel-text text-danger">❌ Request Rejected</h2>
                         <p>Sorry, your request wasn’t accepted. But don’t worry — your payment has been <strong>fully refunded</strong>.</p>
                         <p>Feel free to explore other events happening soon 🌍</p>
-                    {% elif is_not_joinable %}
+                    {% elif is_past %}
                         <h2 class="pixel-text text-danger">❌ You can not join anymore</h2>
                         <p>This event is either past due, either canceled.</p>
                     {% else %}

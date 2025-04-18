@@ -28,7 +28,11 @@ def participant():
     return user
 
 class StubPaymentGateway:
-    def create_payment(self, user, event, amount_in_cents):
+    def create_payment(self, user, event, amount_in_cents, message=None):
+        self.user = user
+        self.event = event
+        self.amount_in_cents = amount_in_cents
+        self.message = message  
         return "stub_payment_id"
 
     def capture(self, payment_id):
@@ -59,18 +63,28 @@ def test_event_is_past_if_in_past(event):
     assert event.is_past(a_date_after) is True
 
 
-def test_user_joins_event_and_gets_pending_participation(participant, event):
+def test_user_joins_event_and_gets_to_pay(participant, event):
     payment_gateway = StubPaymentGateway()
-    participation = event.add_participation(
+    payment_id = event.checkout_user(
         user=participant,
         payment_gateway=payment_gateway,
         message="Looking forward to it!"
+    )
+    assert payment_id == "stub_payment_id"
+    assert payment_gateway.user == participant
+    assert payment_gateway.event == event
+    assert payment_gateway.message == "Looking forward to it!"
+
+
+def test_user_joins_waitlist(participant, event):
+    participation = event.add_participation(
+        user=participant,
+        message="Looking forward to it!",
     )
     assert isinstance(participation, Participation)
     assert participation.user == participant
     assert participation.event == event
     assert participation.status == "PENDING"
-    assert participation.payment_id == "stub_payment_id"
     assert participation.message == "Looking forward to it!"
 
 

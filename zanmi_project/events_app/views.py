@@ -15,6 +15,8 @@ from services.use_cases import (
     reject_participation,
     get_user_notifications,
 )
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from .forms import ParticipationForm
 from domain.user import User as DomainUser
 from domain.event import Participation
@@ -23,7 +25,13 @@ from django.contrib.auth.decorators import login_required
 from .stub_payment_gateway import StubPaymentGateway
 from .stub_notification_gateway import StubNotificationGateway
 from .forms import ParticipationForm
+from django.contrib.auth import get_user_model
+UserDB = get_user_model()
+from events_app.models import EventDB
 from django.views.decorators.http import require_POST
+from django.conf import settings
+import stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def landing(request):
@@ -83,24 +91,82 @@ def join_event(request, event_id):
     form = ParticipationForm(request.POST)
     event_repo = DjangoEventRepository()
     participation_repo = DjangoParticipationRepository()
+
     if not form.is_valid():
         return redirect("event_detail", event_id=event_id)
+
     event = get_event_detail(event_id, repo=event_repo)
     domain_user = DomainUser(username=request.user.username)
+
     existing = get_user_participation(request.user.id, event_id, participation_repo)
     if existing:
-        return redirect("event_detail", event_id=event_id)  # Or show a flash message?
-    participation = event.add_participation(
+        return redirect("event_detail", event_id=event_id)  # Optional: add flash message
+
+    # Stripe checkout
+    from .stripe_payment_gateway import StripePaymentGateway
+    payment_gateway = StripePaymentGateway()
+
+    payment_id = event.checkout_user(
         user=domain_user,
-        payment_gateway=StubPaymentGateway(),  # Replace later
+        payment_gateway=payment_gateway,
         message=form.cleaned_data["message"]
     )
-    if not participation:
+
+    if not payment_id:
         return render(request, "events_app/payment_failed.html")
-    # Save participation
-    print(participation)
-    notify_when_participant_joins(create_participation(participation, participation_repo), StubNotificationGateway(), DjangoNotificationRepository()) 
-    return redirect("event_detail", event_id=event_id)
+
+    # Redirect to Stripe checkout page
+    return redirect(payment_id)
+# events_app/views.py
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+    try:
+        stripe_event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+    except (ValueError, stripe.error.SignatureVerificationError):
+        return JsonResponse({"error": "Invalid webhook"}, status=400)
+
+    if stripe_event['type'] == "checkout.session.completed":
+        session = stripe_event['data']['object']
+        username = session['metadata']['username']
+        event_title = session['metadata']['event_title']
+        message = session['metadata'].get('message', '')
+        payment_intent_id = session['payment_intent']
+        event_db = EventDB.objects.get(title=event_title)
+        # Step 2: build domain objects
+        domain_user = DomainUser(username=username)
+        domain_event = DjangoEventRepository().get_event_by_id(event_db.id)
+
+        # Step 3: create participation in domain
+        participation = domain_event.add_participation(
+            user=domain_user,
+            message=message
+        )
+        participation.payment_id = payment_intent_id
+
+        # Step 4: persist and notify
+        participation_repo = DjangoParticipationRepository()
+        notification_gateway = StubNotificationGateway()
+        notification_repo = DjangoNotificationRepository()
+
+        created = create_participation(participation, participation_repo)
+        notify_when_participant_joins(created, notification_gateway, notification_repo)
+
+    return JsonResponse({"status": "success"})
+
+
+login_required
+def stripe_success(request):
+    return render(request, 'events_app/stripe_success.html')
+
+login_required
+def stripe_cancel(request):
+    return render(request, 'events_app/stripe_cancel.html')
 
 
 @require_POST

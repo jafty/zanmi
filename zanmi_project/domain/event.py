@@ -32,19 +32,21 @@ class Event:
     def is_manageable_by(self, user: User) -> bool:
         return self.organizer.username == user.username
 
-    def add_participation(self, user: User, payment_gateway, message=""):
+    def checkout_user(self, user: User, payment_gateway, message=""):
         price_cents = get_price_in_cents(self.price)
-        payment_id = payment_gateway.create_payment(user, self, price_cents)
+        payment_id = payment_gateway.create_payment(user, self, price_cents, message)
         if payment_id:
-            return Participation(
-                user=user,
-                event=self,
-                status="PENDING",
-                payment_id=payment_id,
-                message=message
-            )
-        else:
-            return False
+            return payment_id
+        return False
+
+    def add_participation(self, user: User, message=""):
+        price_cents = get_price_in_cents(self.price)
+        return Participation(
+            user=user,
+            event=self,
+            status="PENDING",
+            message=message
+        )
 
 
 class Participation:

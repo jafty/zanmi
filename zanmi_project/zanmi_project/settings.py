@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,9 +28,10 @@ DEBUG = True
 #Proper to pythonanywhere
 #ALLOWED_HOSTS = [
 #'rafiky.pythonanywhere.com',
+#BASE_URL = "https://rafiky.pythonanywhere.com"  # or "http://localhost:8000" for local dev
+
 #]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 
 
 # Application definition
@@ -125,6 +126,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 # Proper to codespaces
+BASE_URL = "https://silver-doodle-6vrgxxxgp5jc4xrw-8000.app.github.dev"  # or "http://localhost:8000" for local dev
+
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
@@ -137,3 +140,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/featured_event/'
+
+
+
+
+# Stripe settings
+# Clés Stripe
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "sk_test_umUV6AR8vWmm6HrkHnSFmPga")
+STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY", "pk_test_iv54kfN7kNgyfbMcVushIuAF")
+STRIPE_WEBHOOK_SECRET = "whsec_e753dd87474098819caa2396ed5af9c6ac2abe0c6c1693e9ef072aa0b4dce0a2"

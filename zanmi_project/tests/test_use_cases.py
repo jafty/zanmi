@@ -87,8 +87,8 @@ def test_get_event_detail():
 
 
 def test_get_price_in_cents():
-    assert get_price_in_cents(12.50) == 1250
-    assert get_price_in_cents(0) == 0
+    assert get_price_in_cents(12.50) == int(1250)
+    assert get_price_in_cents(0) == int(0)
 
 
 def test_organizer_accepts_pending_participation_with_payment_capture(organizer, participant):
