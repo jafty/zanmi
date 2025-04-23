@@ -27,11 +27,9 @@ class StripePaymentGateway(PaymentGateway):
             success_url=f"{settings.BASE_URL}/stripe_success/",
             cancel_url=f"{settings.BASE_URL}/stripe_cancel/",
         )
-        return session.url  # ✅ directly return checkout URL
-
+        return session.url  
     def capture(self, payment_id):
         print("about to capture from Stripe gateway")
         return stripe.PaymentIntent.capture(payment_id)
-
     def cancel(self, payment_id):
         return stripe.PaymentIntent.cancel(payment_id)
