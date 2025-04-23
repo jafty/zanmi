@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import event_detail, join_event, manage_participation, notifications_view, featured_event, landing, stripe_webhook, stripe_success
+from .views import event_detail, join_event, manage_participation, notifications_view, featured_event, landing, stripe_webhook, stripe_success, stripe_cancel
 from django.shortcuts import redirect
 
 
