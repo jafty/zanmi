@@ -125,12 +125,10 @@ def stripe_webhook(request):
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
     endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
-
     try:
         stripe_event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
     except (ValueError, stripe.error.SignatureVerificationError):
         return JsonResponse({"error": "Invalid webhook"}, status=400)
-
     if stripe_event['type'] == "checkout.session.completed":
         session = stripe_event['data']['object']
         username = session['metadata']['username']
@@ -138,25 +136,18 @@ def stripe_webhook(request):
         message = session['metadata'].get('message', '')
         payment_intent_id = session['payment_intent']
         event_db = EventDB.objects.get(title=event_title)
-        # Step 2: build domain objects
         domain_user = DomainUser(username=username)
         domain_event = DjangoEventRepository().get_event_by_id(event_db.id)
-
-        # Step 3: create participation in domain
         participation = domain_event.add_participation(
             user=domain_user,
             message=message
         )
         participation.payment_id = payment_intent_id
-
-        # Step 4: persist and notify
         participation_repo = DjangoParticipationRepository()
         notification_gateway = StubNotificationGateway()
         notification_repo = DjangoNotificationRepository()
-
         created = create_participation(participation, participation_repo)
         notify_when_participant_joins(created, notification_gateway, notification_repo)
-
     return JsonResponse({"status": "success"})
 
 
