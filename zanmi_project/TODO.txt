@@ -1,0 +1,15 @@
+- Formatting
+- Default picture
+- Logout redirection
+- Better rejection / acceptation messages
+- Less comments
+- Better payment success / fail
+- Support system 
+- Certification system
+- Age display for managers
+- RGPD
+- Footer links
+- Google Auth
+- Contact info on notifications and discovered event
+- Fix age display
+
