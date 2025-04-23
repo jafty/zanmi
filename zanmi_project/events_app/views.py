@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
+from .stripe_payment_gateway import StripePaymentGateway
 from services.use_cases import (
     accept_participation,
     get_event_detail,
@@ -91,33 +92,22 @@ def join_event(request, event_id):
     form = ParticipationForm(request.POST)
     event_repo = DjangoEventRepository()
     participation_repo = DjangoParticipationRepository()
-
     if not form.is_valid():
         return redirect("event_detail", event_id=event_id)
-
     event = get_event_detail(event_id, repo=event_repo)
     domain_user = DomainUser(username=request.user.username)
-
     existing = get_user_participation(request.user.id, event_id, participation_repo)
     if existing:
         return redirect("event_detail", event_id=event_id)  # Optional: add flash message
-
-    # Stripe checkout
-    from .stripe_payment_gateway import StripePaymentGateway
     payment_gateway = StripePaymentGateway()
-
     payment_id = event.checkout_user(
         user=domain_user,
         payment_gateway=payment_gateway,
         message=form.cleaned_data["message"]
     )
-
     if not payment_id:
         return render(request, "events_app/payment_failed.html")
-
-    # Redirect to Stripe checkout page
     return redirect(payment_id)
-# events_app/views.py
 
 
 @csrf_exempt
@@ -170,8 +160,8 @@ def manage_participation(request, event_id):
     event_repo = DjangoEventRepository()
     participation_repo = DjangoParticipationRepository()
     notification_repo = DjangoNotificationRepository()
-    payment_gateway = StubPaymentGateway()
-    notification_gateway = StubNotificationGateway()  # ⚠️ change plus tard par ta gateway mail réelle
+    payment_gateway =StripePaymentGateway()  
+    notification_gateway = StubNotificationGateway()  #TODO : send email
     domain_organizer = DomainUser(username=request.user.username)
     event = get_event_detail(event_id, repo=event_repo)
 
@@ -189,6 +179,9 @@ def manage_participation(request, event_id):
         message=db_participation.message
     )
     if action == "accept":
+        print("ACCEPTED")
+        print("domain_participation id:")
+        print(domain_participation.payment_id)
         updated = accept_participation(domain_organizer, domain_participation, payment_gateway)
         notify_when_accepted(updated, notification_gateway, notification_repo)
     elif action == "reject":

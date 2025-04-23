@@ -30,6 +30,7 @@ class StripePaymentGateway(PaymentGateway):
         return session.url  # ✅ directly return checkout URL
 
     def capture(self, payment_id):
+        print("about to capture from Stripe gateway")
         return stripe.PaymentIntent.capture(payment_id)
 
     def cancel(self, payment_id):

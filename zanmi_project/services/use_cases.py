@@ -51,6 +51,7 @@ def get_event_detail(event_id: int, repo: EventRepository) -> Event:
 
 def accept_participation(organizer: User, participation: Participation, payment_gateway):
     if participation.payment_id and payment_gateway:
+        print("Payment ID:" + participation.payment_id)
         payment_gateway.capture(participation.payment_id)
         participation.accept()
         return participation
