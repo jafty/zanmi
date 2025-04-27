@@ -5,7 +5,7 @@ from domain.notification import Notification
 from domain.repositories.event_repository import EventRepository
 from domain.repositories.user_profile_repository import UserProfileRepository
 from domain.repositories.participation_repository import ParticipationRepository
-from domain.repositories.notification_repository import NotificationRepository  
+from domain.repositories.notification_repository import NotificationRepository
 
 from services.queries import *
 from services.use_cases import *
@@ -65,7 +65,7 @@ def reject_participation(organizer: User, participation: Participation, payment_
 
 
 def notify_when_accepted(participation: Participation, notification_gateway, notification_repo):
-    message = f"You have been accepted to the event on {participation.event.start_datetime.strftime('%Y-%m-%d')}!"
+    message = f" accepted to the event on {participation.event.start_datetime.strftime('%Y-%m-%d')}!"
     notification = Notification(
         recipient=participation.user,
         sender=participation.event.organizer,
@@ -77,7 +77,7 @@ def notify_when_accepted(participation: Participation, notification_gateway, not
 
 
 def notify_when_rejected(participation: Participation, notification_gateway, notification_repo):
-    message = f"Unfortunately, you were rejected for the event on {participation.event.start_datetime.strftime('%Y-%m-%d')}."
+    message = f" unfortunately rejected you for the event on {participation.event.start_datetime.strftime('%Y-%m-%d')}."
     notification = Notification(
         recipient=participation.user,
         sender=participation.event.organizer,
@@ -166,7 +166,7 @@ def create_or_update_user_profile(
                 country=country,
                 birth_date=birth_date,
                 is_certified=is_certified,
-            )        
+            )
         existing_profile.user.username = username
         existing_profile.city = city
         existing_profile.country = country

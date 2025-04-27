@@ -1,15 +1,17 @@
 - Formatting
-- Default picture
-- Logout redirection
-- Better rejection / acceptation messages
+- Better CTA
 - Less comments
 - Better payment success / fail
-- Support system 
+- Support system
 - Certification system
 - Age display for managers
 - RGPD
-- Footer links
 - Google Auth
 - Contact info on notifications and discovered event
 - Fix age display
-
+- Change file structure
+- Remove default from models
+- Change get_from_id on repositories
+- Integration tests
+- End to end tests
+- Acceptance tests
