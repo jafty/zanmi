@@ -150,7 +150,7 @@ def test_user_status_is_not_organizer(participant, event):
 def test_user_profile_creation():
     """
     GIVEN a domain User object
-    WHEN we create a UserProfile with various fields
+    WHEN we create a UserProf ile with various fields
     THEN all fields should be set correctly in-memory, with no DB involved.
     """
     user = User(username="john_doe")

@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 from django import forms
 
 
+class UsernameForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username']
+
+
 class UserProfileForm(forms.Form):
     avatar = forms.ImageField(required=False, label="Profile picture")
     birth_date = forms.DateField(

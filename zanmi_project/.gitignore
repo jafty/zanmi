@@ -2,3 +2,4 @@
 zanmi_project/settings.py
 settings.py
 db.sqlite3
+zanmi_project/db.sqlite3

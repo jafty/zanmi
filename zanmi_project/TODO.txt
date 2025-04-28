@@ -1,5 +1,5 @@
-- Formatting
 - Better CTA
+- E-mail
 - Less comments
 - Better payment success / fail
 - Support system

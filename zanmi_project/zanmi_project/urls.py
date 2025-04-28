@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('', include('events_app.urls')),
     path("admin/", admin.site.urls),
+    path('allauth/', include('allauth.urls')),  # Allauth handles login/logout etc.
     path("register/", register_view, name="register"),
     path("login/", auth_views.LoginView.as_view(template_name="users_app/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),

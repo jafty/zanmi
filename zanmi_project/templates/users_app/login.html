@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+{% load socialaccount %}
+
 {% block title %}Log in to Zanmi{% endblock %}
 
 {% block content %}
@@ -28,6 +30,11 @@
                 </div>
                 <button type="submit" class="primary-btn w-100 mt-3">Log In</button>
             </form>
+            <form action="{% provider_login_url 'google' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Continue with Google</button>
+            </form>
+            
 
             <div class="text-center mt-2">
                 Don't have an account? <a href="{% url 'register' %}" class="text-decoration-none">Sign up</a>
