@@ -16,6 +16,7 @@ __pycache__/
 db.sqlite3
 /static/
 media/
+zanmi_project/db.sqlite3
 
 # MacOS & system
 .DS_Store
