@@ -23,8 +23,7 @@ from domain.user import User as DomainUser
 from domain.event import Participation
 from .repositories import DjangoEventRepository, DjangoParticipationRepository, DjangoUserProfileRepository, DjangoNotificationRepository
 from django.contrib.auth.decorators import login_required
-from .stub_payment_gateway import StubPaymentGateway
-from .stub_notification_gateway import StubNotificationGateway
+from .email_notification_gateway import EmailNotificationGateway
 from .forms import ParticipationForm
 from django.contrib.auth import get_user_model
 UserDB = get_user_model()
@@ -69,9 +68,6 @@ def event_detail(request, event_id):
         pending_participants = None
     is_unrelated = is_unrelated_to_event(domain_user, event, [domain_participation] if domain_participation else [])
     form = ParticipationForm()
-    print("DEBUG is_manager:", is_manager)
-    print("event.organizer.username:", event.organizer.username)
-    print("domain_user.username:", domain_user.username)
     return render(request, "events_app/event_detail.html", {
         "event": event,
         "is_manager": is_manager,
@@ -134,7 +130,7 @@ def stripe_webhook(request):
         )
         participation.payment_id = payment_intent_id
         participation_repo = DjangoParticipationRepository()
-        notification_gateway = StubNotificationGateway()
+        notification_gateway = EmailNotificationGateway()
         notification_repo = DjangoNotificationRepository()
         created = create_participation(participation, participation_repo)
         notify_when_participant_joins(created, notification_gateway, notification_repo)
@@ -161,7 +157,7 @@ def manage_participation(request, event_id):
     participation_repo = DjangoParticipationRepository()
     notification_repo = DjangoNotificationRepository()
     payment_gateway =StripePaymentGateway()  
-    notification_gateway = StubNotificationGateway()  #TODO : send email
+    notification_gateway = EmailNotificationGateway  #TODO : send email
     domain_organizer = DomainUser(username=request.user.username)
     event = get_event_detail(event_id, repo=event_repo)
 
@@ -179,9 +175,6 @@ def manage_participation(request, event_id):
         message=db_participation.message
     )
     if action == "accept":
-        print("ACCEPTED")
-        print("domain_participation id:")
-        print(domain_participation.payment_id)
         updated = accept_participation(domain_organizer, domain_participation, payment_gateway)
         notify_when_accepted(updated, notification_gateway, notification_repo)
     elif action == "reject":
