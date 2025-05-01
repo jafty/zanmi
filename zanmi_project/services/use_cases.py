@@ -89,6 +89,7 @@ def notify_when_rejected(participation: Participation, notification_gateway, not
 
 
 def notify_when_participant_joins(participation: Participation, notification_gateway, notification_repo):
+    print("NOTIFYING")
     message = f"{participation.user.username} has requested to join your event on {participation.event.start_datetime.strftime('%Y-%m-%d')}."
     notification = Notification(
         recipient=participation.event.organizer,
