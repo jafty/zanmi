@@ -5,6 +5,7 @@ from allauth.account.adapter import DefaultAccountAdapter
 
 
 class MySocialAccountAdapter(DefaultSocialAccountAdapter):
+
     def populate_user(self, request, sociallogin, data):
         print("populate_user")
         user = super().populate_user(request, sociallogin, data)
@@ -20,9 +21,8 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         if user.username.startswith("temp_"):
             return reverse('complete_social_signup')
 
-        # Redirige vers edit_profile juste après création du compte
         if request.session.pop('is_first_login', False):
-            return reverse('edit_profile', kwargs={'username': user.username})
+            return reverse('profile_edit')
 
         return reverse('feature_event')  # page par défaut
 

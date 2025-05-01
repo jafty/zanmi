@@ -26,7 +26,7 @@ def register_view(request):
                 is_certified=False
             )
             login(request, user)
-            return redirect("profile_edit") 
+            return redirect("profile_edit")
     else:
         form = CustomUserCreationForm()
     return render(request, "users_app/register.html", {"form": form})
@@ -36,9 +36,7 @@ def register_view(request):
 def profile(request, username=None):
     repo = DjangoUserProfileRepository()
     participation_repo = DjangoParticipationRepository()
-    current_user = DomainUser(username=request.user.username)
     if not username or username == request.user.username:
-        target_user = current_user
         target_user_id = request.user.id
         can_edit = True
     else:
@@ -46,7 +44,6 @@ def profile(request, username=None):
         UserDB = get_user_model()
         try:
             db_user = UserDB.objects.get(username=username)
-            target_user = DomainUser(username=db_user.username)
             target_user_id = db_user.id
             can_edit = False
         except UserDB.DoesNotExist:
@@ -81,7 +78,6 @@ def profile_edit(request):
     print("PROFILE EDIT")
     repo = DjangoUserProfileRepository()
     current_user = request.user
-    domain_user = DomainUser(username=current_user.username)
     domain_profile = get_profile_detail(user_id=current_user.id, repo=repo)
     if request.method == "POST":
         form = UserProfileForm(request.POST, request.FILES)
@@ -130,6 +126,7 @@ def profile_edit(request):
 
 @login_required
 def post_login_redirect(request):
+    print("post login redirect")
     user = request.user
     if user.username.startswith("temp_"):
         return redirect('complete_social_signup')
@@ -138,14 +135,32 @@ def post_login_redirect(request):
 
 @login_required
 def complete_social_signup(request):
+    print("complete social signup")
     user = request.user
+    repo = DjangoUserProfileRepository()
     if not user.username.startswith("temp_"):
-        return redirect('edit_profile', username=user.username)
+        create_or_update_user_profile(
+            repo=repo,
+            username=user.username,
+            user_id=user.id,
+            city="",  # or default values
+            country="",
+            is_certified=False
+        )
+        return redirect('profile_edit')
     if request.method == 'POST':
         form = UsernameForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('edit_profile', username=user.username)
+            create_or_update_user_profile(
+                repo=repo,
+                username=user.username,
+                user_id=user.id,
+                city="",  # or default values
+                country="",
+                is_certified=False
+            )
+            return redirect('profile_edit')
     else:
         form = UsernameForm(instance=user)
     return render(request, 'users_app/complete_signup.html', {'form': form})

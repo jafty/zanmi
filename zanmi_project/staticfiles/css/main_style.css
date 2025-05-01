@@ -107,6 +107,54 @@ h3 {
     color: #ff69b4;
 }
 
+/* Google button */
+
+.google-button {
+    background-color: #fff; /* White background */
+    color: #3c4043; /* Google's text color */
+    border: 1px solid #dadce0; /* Google's border color */
+    border-radius: 4px; /* Rounded corners */
+    padding: 0 16px; /* Vertical padding 0, horizontal padding */
+    height: 40px; /* Standard Google button height */
+    font-family: 'Roboto', sans-serif; /* Google's font */
+    font-size: 14px; /* Standard font size */
+    font-weight: 500; /* Medium font weight */
+    display: flex; /* Use flexbox to align icon and text */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    cursor: pointer; /* Indicate it's clickable */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Make it full width like your other buttons */
+    margin-top: 15px; /* Add some space above it */
+    box-shadow: none; /* Remove default button shadow */
+    text-decoration: none; /* Ensure text is not underlined if used on an anchor */
+}
+
+.google-button:hover {
+    background-color: #f8f9fa; /* Slightly darker on hover */
+    border-color: #d2d4d7;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.04), 0 1px 3px 0 rgba(0,0,0,.08); /* Subtle shadow */
+}
+
+.google-button:active {
+    background-color: #e8eaed; /* Even darker when pressed */
+    border-color: #dadce0;
+    box-shadow: none;
+}
+
+.google-icon-img {
+    margin-right: 8px; /* Space between logo and text */
+    width: 18px; /* Standard logo size */
+    height: 18px;
+    /* Add display: block; or vertical-align: middle; if you have vertical alignment issues */
+    display: block;
+}
+
+/* Optional: Add Roboto font if not already included */
+/* <link rel="preconnect" href="https://fonts.googleapis.com"> */
+/* <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> */
+/* <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet"> */
+
 /* ========================== */
 /*         NAVBAR              */
 /* ========================== */

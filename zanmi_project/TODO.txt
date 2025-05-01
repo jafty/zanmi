@@ -6,7 +6,6 @@
 - Certification system
 - Age display for managers
 - RGPD
-- Google Auth
 - Contact info on notifications and discovered event
 - Fix age display
 - Change file structure
