@@ -22,6 +22,9 @@ class EmailNotificationGateway:
                 to=[recipient_email],
             )
             email.send()
+            print(f"Email sent to {recipient_email}: {message_body}")
+            logger.info(f"Email sent to {recipient_email}: {message_body}")
+            # Log the email sending
             return True
         except Exception as e:
             logger.error(f"Email sending failed to {recipient_email}: {e}")
