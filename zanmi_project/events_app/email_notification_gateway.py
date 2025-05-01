@@ -15,6 +15,7 @@ class EmailNotificationGateway:
         email_subject = 'New Notification from ' + notification.sender.username + ' about ' + notification.event.title 
         from_email = settings.DEFAULT_FROM_EMAIL
         try:
+            print(f"Sending email to {recipient_email}: {message_body}")
             email = EmailMessage(
                 subject=email_subject,
                 body=message_body,
