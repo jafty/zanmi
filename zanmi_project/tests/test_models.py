@@ -239,6 +239,19 @@ def test_get_age_returns_correct_age_36(participant):
     assert age == 36
 
 
+def test_get_age_returns_correct_age_29(participant):
+    """
+    GIVEN a UserProfile with a birth_date of 1990-05-21
+    WHEN we ask for the age on 2025-05-21
+    THEN it should return 35
+    """
+    birth_date = date(1995, 9, 19)
+    profile = UserProfile(user=participant, birth_date=birth_date)
+    today = date(2025, 5, 21)
+    age = profile.get_age(today)
+    assert age == 29
+
+
 def test_get_age_is_none_when_no_birth_date(participant):
     """
     GIVEN a UserProfile with a birth_date of 1990-05-21

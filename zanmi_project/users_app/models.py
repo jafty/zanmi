@@ -26,5 +26,21 @@ class UserProfileDB(models.Model):
     consent_date = models.DateTimeField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(default=now)
 
+    # Fields for Privacy Policy Consent
+    privacy_policy_consent = models.BooleanField(default=False)
+    privacy_policy_consent_date = models.DateTimeField(null=True, blank=True)
+    privacy_policy_consent_text = models.TextField(blank=True, null=True) 
+
+    # Fields for Terms of Service Consent
+    terms_of_service_consent = models.BooleanField(default=False)
+    terms_of_service_consent_date = models.DateTimeField(null=True, blank=True)
+    terms_of_service_consent_text = models.TextField(blank=True, null=True) 
+
+    # Fields for Event Invitation Email Consent
+    event_invitation_consent = models.BooleanField(default=False)
+    event_invitation_consent_date = models.DateTimeField(null=True, blank=True)
+    event_invitation_consent_text = models.TextField(blank=True, null=True)
+
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

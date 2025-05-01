@@ -43,12 +43,31 @@ class UserProfileForm(forms.Form):
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
+    # Add new consent fields
+    privacy_policy_consent = forms.BooleanField(
+        label="I agree to the Privacy Policy",
+        required=True,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input me-2'})
+    )
+    terms_of_service_consent = forms.BooleanField(
+        label="I agree to the Terms of Service",
+        required=True,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input me-2'})
+    )
+    event_invitation_consent = forms.BooleanField(
+        label="I would like to receive email invitations to events",
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input me-2'})
+    )
+
     class Meta:
         model = User
-        fields = ("username", "email", "password1", "password2")
+        # Include username, email, password, and password2 in Meta.fields
+        fields = ("username", "email", "password1", "password2") # Use 'password' and 'password2'
+
 
     def clean_email(self):
-        email = self.cleaned_data["email"]
-        if User.objects.filter(email=email).exists():
+        email = self.cleaned_data.get("email")
+        if email and User.objects.filter(email=email).exists():
             raise forms.ValidationError("This email is already used.")
         return email

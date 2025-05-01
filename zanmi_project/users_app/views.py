@@ -7,16 +7,23 @@ from services.use_cases import get_profile_detail, create_or_update_user_profile
 from .repositories import DjangoUserProfileRepository
 from events_app.repositories import DjangoParticipationRepository, DjangoEventRepository
 from datetime import date, datetime
+from django.utils.timezone import now
 
 
 def register_view(request):
     if request.user.is_authenticated:
-        return redirect("featured_event")
+        return redirect("featured_event") # Redirect to a relevant page
+
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False) # Don't save the user yet
+            # Handle password saving manually since we took it out of Meta fields
+            user.set_password(form.cleaned_data['password1'])
+            user.save() # Now save the user
+
             repo = DjangoUserProfileRepository()
+            # Assuming create_or_update_user_profile handles creating the profile if it doesn't exist
             create_or_update_user_profile(
                 repo=repo,
                 username=user.username,
@@ -25,12 +32,25 @@ def register_view(request):
                 country="",
                 is_certified=False
             )
-            login(request, user)
-            return redirect("profile_edit")
+            now_time = now()
+            if form.cleaned_data.get('privacy_policy_consent'):
+                profile.privacy_policy_consent = True
+                profile.privacy_policy_consent_date = now_time
+                profile.privacy_policy_consent_text = "I agree to the processing of my data as outlined in the Privacy Policy." # Store the exact text
+            if form.cleaned_data.get('terms_of_service_consent'):
+                profile.terms_of_service_consent = True
+                profile.terms_of_service_consent_date = now_time
+                profile.terms_of_service_consent_text = "I agree to the Terms of Service." # Store the exact text
+            if form.cleaned_data.get('event_invitation_consent'):
+                profile.event_invitation_consent = True
+                profile.event_invitation_consent_date = now_time
+                profile.event_invitation_consent_text = "I would like to receive email invitations to events." # Store the exact text
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect("profile_edit") # Redirect to profile edit or a welcome page
     else:
         form = CustomUserCreationForm()
-    return render(request, "users_app/register.html", {"form": form})
 
+    return render(request, "users_app/register.html", {"form": form})
 
 @login_required
 def profile(request, username=None):

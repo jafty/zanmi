@@ -39,8 +39,11 @@ class UserProfile:
     def can_edit(self, user: User) -> bool:
         return self.user.username == user.username
 
-    def get_age(self, current_date: date) -> int: # None if no birth date
+    def get_age(self, current_date: date) -> int | None: # Added Union[int, None] for clarity
         if not self.birth_date:
             return None
         age = current_date.year - self.birth_date.year
+        if (current_date.month < self.birth_date.month or
+            (current_date.month == self.birth_date.month and current_date.day < self.birth_date.day)):
+            age -= 1
         return age
