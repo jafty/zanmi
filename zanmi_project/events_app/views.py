@@ -157,7 +157,7 @@ def manage_participation(request, event_id):
     participation_repo = DjangoParticipationRepository()
     notification_repo = DjangoNotificationRepository()
     payment_gateway =StripePaymentGateway()  
-    notification_gateway = EmailNotificationGateway  #TODO : send email
+    notification_gateway = EmailNotificationGateway()  #TODO : send email
     domain_organizer = DomainUser(username=request.user.username)
     event = get_event_detail(event_id, repo=event_repo)
 
