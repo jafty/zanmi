@@ -8,9 +8,6 @@ class EmailNotificationGateway:
     def send(self, notification) -> bool:
         recipient = notification.recipient
         message_body = notification.message
-        if not recipient or not getattr(recipient, 'email', None):
-            logger.warning("Email sending failed: Recipient email missing.")
-            return False
         recipient_email = recipient.email
         email_subject = 'New Notification from ' + notification.sender.username + ' about ' + notification.event.title 
         from_email = settings.DEFAULT_FROM_EMAIL
