@@ -1,14 +1,21 @@
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.contrib.auth import get_user_model
 import logging
 
 logger = logging.getLogger(__name__)
+UserModel = get_user_model()
 
 class EmailNotificationGateway:
     def send(self, notification) -> bool:
-        recipient = notification.recipient
+        domain_user = notification.recipient
+        try:
+            django_user = UserModel.objects.get(username=domain_user.username)
+        except UserModel.DoesNotExist:
+            logger.error(f"Impossible de trouver l'utilisateur Django '{domain_user.username}'")
+            return False
         message_body = notification.message
-        recipient_email = recipient.email
+        recipient_email = django_user.email
         email_subject = 'New Notification from ' + notification.sender.username + ' about ' + notification.event.title 
         from_email = settings.DEFAULT_FROM_EMAIL
         try:
