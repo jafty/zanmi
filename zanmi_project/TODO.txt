@@ -1,13 +1,7 @@
-- Better CTA
-- E-mail
 - Less comments
 - Support system
 - Certification system
 - Age display for managers
-- Contact info on notifications and discovered event
-- Change file structure
-- Remove default from models
 - Change get_from_id on repositories
-- Integration tests
 - End to end tests
-- Acceptance tests
+- Default image for events

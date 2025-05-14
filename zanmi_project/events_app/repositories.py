@@ -94,7 +94,7 @@ class DjangoParticipationRepository(ParticipationRepository):
             )
             for p in db_participations
         ]
-    
+
 
 class DjangoUserProfileRepository(UserProfileRepository):
 
@@ -155,7 +155,7 @@ class DjangoNotificationRepository(NotificationRepository):
 
     def count_unread_notifications(self, user_id: int) -> int:
         return NotificationDB.objects.filter(recipient_id=user_id, is_read=False).count()
-    
+
     def get_notifications_for_user(self, user_id: int) -> list[Notification]:
         db_notifications = NotificationDB.objects.filter(recipient_id=user_id).order_by("-created_at")
         return [
@@ -167,7 +167,8 @@ class DjangoNotificationRepository(NotificationRepository):
                     title=n.event.title,
                     location=n.event.location,
                     start_datetime=n.event.start_datetime,
-                    organizer=User(username=n.event.organizer.username)
+                    organizer=User(username=n.event.organizer.username),
+                    image_url = n.event.image.url if n.event.image else "",
                 ),
             )
             for n in db_notifications
