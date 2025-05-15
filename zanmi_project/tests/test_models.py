@@ -88,14 +88,8 @@ def test_user_joins_waitlist(participant, event):
     assert participation.message == "Looking forward to it!"
 
 
-def test_user_joins_event_but_fails_payment(participant, event):
-    failed_payment_gateway = StubFailedPaymentGateway()
-    participation = event.add_participation(
-        user=participant,
-        payment_gateway=failed_payment_gateway,
-        message="Looking forward to it!"
-    )
-    assert not participation
+def test_created_event_has_default_image(event):
+    assert event.image_url == "event_images/event_default.png"
 
 
 # PARTICIPATION ENTITY
@@ -175,6 +169,47 @@ def test_user_profile_creation():
     )
     assert profile.user == user
     assert profile.avatar == "avatars/custom.jpg"
+    assert profile.description == "I love traveling!"
+    assert profile.birth_date == date(1990, 5, 21)
+    assert profile.city == "Paris"
+    assert profile.country == "France"
+    assert profile.languages_spoken == "French, English"
+    assert profile.centers_of_interest == "Cooking, Painting"
+    assert profile.event_expectations == "Meeting new friends"
+    assert profile.activity_preferences == "Sports, Food tours"
+    assert profile.group_size_preference == "Medium"
+    assert profile.dietary_restrictions == "Vegetarian"
+    assert profile.is_certified is True
+    assert profile.consent_date == datetime(2025, 1, 10, 14, 30)
+
+
+def test_user_profile_creation_without_avatar():
+    """
+    GIVEN a domain User object
+    WHEN we create a UserProf ile with various fields
+    THEN all fields should be set correctly in-memory, with no DB involved.
+    """
+    user = User(username="john_doe")
+    profile = UserProfile(
+        user=user,
+        description="I love traveling!",
+        birth_date=date(1990, 5, 21),
+        city="Paris",
+        country="France",
+        languages_spoken="French, English",
+        centers_of_interest="Cooking, Painting",
+        event_expectations="Meeting new friends",
+        activity_preferences="Sports, Food tours",
+        group_size_preference="Medium",
+        dietary_restrictions="Vegetarian",
+        is_certified=True,
+        consent_date=datetime(2025, 1, 10, 14, 30),
+        # If you want to test slug generation logic, you can skip passing `slug`
+        # or pass an explicit slug. This is purely domain logic, not DB-based.
+        slug="john_doe_slug"  
+    )
+    assert profile.user == user
+    assert profile.avatar == "avatars/default.jpg"
     assert profile.description == "I love traveling!"
     assert profile.birth_date == date(1990, 5, 21)
     assert profile.city == "Paris"

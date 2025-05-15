@@ -14,7 +14,7 @@ class Event:
         description: str = "",
         time: str = "",
         activity_type: str = "",
-        image_url: str = ""
+        image_url: str = "event_images/event_default.png",
     ):
         self.title = title
         self.location = location
