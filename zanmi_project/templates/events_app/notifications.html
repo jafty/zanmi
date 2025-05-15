@@ -14,13 +14,23 @@
                 {% for notification in notifications %}
                     <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
                         <div class="notification-content">
-                            <a href="{% url 'profile_by_username' notification.sender.username %}" class="organizer-link">{{ notification.sender.username }}</a>
-                            {{ notification.message }}. Location: {{ notification.event.location }}
-                            
-                            for
-                            <a href="{% url 'event_detail' notification.event.id %}" class="organizer-link">
-                                {{ notification.event.title }}
-                            </a>
+                            <div class="notification-image">
+                                <img src="{{ notification.event.image_url }}" alt="{{ notification.event.title }}">
+                                <p>{{ notification.event.image_url }}</p>
+                            </div>
+                            <div class="notification-details">
+                                <div class="notification-message">
+                                    <a href="{% url 'profile_by_username' notification.sender.username %}" class="organizer-link">
+                                        {{ notification.sender.username }}
+                                    </a>
+                                    {{ notification.message }}
+                                </div>
+                                <div class="notification-meta">
+                                    {% if not notification.is_read %}
+                                        <span class="unread-badge"><a href="{% url 'event_detail' notification.event.id %}" class="event-link" style="color: white !important">{{ notification.event.title }}</a></span>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
@@ -28,6 +38,7 @@
                 <div class="empty-notifications">
                     <img src="https://api.iconify.design/mdi:bell-outline.svg" alt="No notifications" class="empty-icon">
                     <p>No notifications yet</p>
+                    <p class="text-muted mt-2">When you receive notifications, they'll appear here</p>
                 </div>
             {% endif %}
         </div>
