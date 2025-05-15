@@ -11,7 +11,7 @@ class EventDB(models.Model):
     description = models.TextField(blank=True, null=True)
     time = models.CharField(max_length=6, blank=True, null=True)
     activity_type = models.CharField(max_length=100, blank=True, null=True)
-    image = models.ImageField(upload_to='event_images/', blank=True, null=True, default='event_images/default.jpg')
+    image = models.ImageField(upload_to='event_images/', blank=True, null=True)
 
     def __str__(self):
         return f"Event by {self.organizer.username} on {self.start_datetime}"
