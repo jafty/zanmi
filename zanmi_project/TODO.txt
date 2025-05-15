@@ -4,4 +4,3 @@
 - Age display for managers
 - Change get_from_id on repositories
 - End to end tests
-- Default image for events
