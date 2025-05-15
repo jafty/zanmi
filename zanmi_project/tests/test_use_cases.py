@@ -418,3 +418,32 @@ def test_create_user_profile_if_none_exists(participant):
     assert created_profile.is_certified == False
     assert created_profile.avatar == "avatars/john.jpg"
     assert stub_repo.save_calls == 1  # saved once
+
+
+# POST ACCEPTATION COMMUNICATION
+# --------------------------
+
+class StubAnnouncementRepo:
+    def __init__(self):
+        self.saved = []
+    def save_announcement(self, announcement: Announcement):
+        self.saved.append(announcement)
+    def get_announcements(self, event_id: int):
+        return list(self.saved)
+    
+
+def test_host_publish_announcement(event, organizer):
+    repo = StubAnnouncementRepo()
+    announcement = publish_announcement(
+        event=event,
+        author=organizer,
+        content="Bienvenue à tous !",
+        anonymous=False,
+        repo=repo
+    )
+    # l’annonce est renvoyée et sauvegardée
+    assert isinstance(ann, Announcement)
+    assert repo.saved == [ann]
+    # host flag
+    assert ann.is_host_message is True
+    assert ann.author == organizer
