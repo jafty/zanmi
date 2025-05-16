@@ -16,7 +16,7 @@ def  organizer():
 @pytest.fixture
 def current_date():
     current_date= datetime(2025, 4, 11)
-    return current_date 
+    return current_date
 
 
 @pytest.fixture
@@ -38,7 +38,7 @@ class StubPaymentGateway:
         self.user = user
         self.event = event
         self.amount_in_cents = amount_in_cents
-        self.message = message  
+        self.message = message
         return "stub_payment_id"
 
     def capture(self, payment_id):
@@ -84,9 +84,8 @@ def test_user_joins_event_and_gets_to_pay(participant, event):
 
 def test_publish_announcement_by_host(event, organizer):
     announcement = event.publish_announcement(
-        author=organizer,
         content="Bienvenue à tous !",
-        anonymous=False
+        organizer=True,
     )
     assert isinstance(announcement, Announcement)
     assert announcement in event.announcements
@@ -102,6 +101,7 @@ def test_user_joins_waitlist(participant, event):
     assert isinstance(participation, Participation)
     assert participation.user == participant
     assert participation.event == event
+    assert participation.author == organizer
     assert participation.status == "PENDING"
     assert participation.message == "Looking forward to it!"
 
@@ -183,7 +183,7 @@ def test_user_profile_creation():
         consent_date=datetime(2025, 1, 10, 14, 30),
         # If you want to test slug generation logic, you can skip passing `slug`
         # or pass an explicit slug. This is purely domain logic, not DB-based.
-        slug="john_doe_slug"  
+        slug="john_doe_slug"
     )
     assert profile.user == user
     assert profile.avatar == "avatars/custom.jpg"
@@ -224,7 +224,7 @@ def test_user_profile_creation_without_avatar():
         consent_date=datetime(2025, 1, 10, 14, 30),
         # If you want to test slug generation logic, you can skip passing `slug`
         # or pass an explicit slug. This is purely domain logic, not DB-based.
-        slug="john_doe_slug"  
+        slug="john_doe_slug"
     )
     assert profile.user == user
     assert profile.avatar == "avatars/default.jpg"
@@ -250,7 +250,7 @@ def test_can_edit_own_profile(participant):
     """
     profile = UserProfile(user=participant, description="Participant's profile")
     # make sure that we test two different objects since it will happen
-    result = profile.can_edit(User(username=participant.username)) 
+    result = profile.can_edit(User(username=participant.username))
     assert result is True
 
 

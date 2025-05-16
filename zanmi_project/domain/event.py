@@ -48,34 +48,35 @@ class Event:
             message=message
         )
 
-    def publish_announcement(self):
+    def publish_announcement(self, content: str, organizer: bool):
+
         return None
 
 
 class Participation:
-    
+
     def __init__(self, user: User, event: Event, status="PENDING", payment_id=None, message=""):
         self.user = user
         self.event = event
         self.status = status
         self.payment_id = payment_id
         self.message = message
-    
+
     def is_pending(self):
         return self.status == "PENDING"
 
     def is_accepted(self):
         return self.status == "ACCEPTED"
-    
+
     def is_rejected(self):
         return self.status == "REJECTED"
-    
+
     def reject(self):
         self.status = "REJECTED"
 
     def accept(self):
         self.status = "ACCEPTED"
-    
+
 
 class Announcement:
     def __init__(
@@ -91,5 +92,5 @@ class Announcement:
         self.content = content
         self.is_host_message = is_host_message
         self.created_at = created_at or datetime.utcnow()
-    
+
 
