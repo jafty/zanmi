@@ -2,9 +2,15 @@ import sys
 import os
 import pytest
 from datetime import date, datetime
-from domain.event import Event, Participation
+from domain.event import Event, Participation, Announcement
 from domain.user import User
 from domain.user_profile import UserProfile
+
+
+@pytest.fixture
+def  organizer():
+    organizer = User(username="Host")
+    return organizer
 
 
 @pytest.fixture
@@ -74,6 +80,18 @@ def test_user_joins_event_and_gets_to_pay(participant, event):
     assert payment_gateway.user == participant
     assert payment_gateway.event == event
     assert payment_gateway.message == "Looking forward to it!"
+
+
+def test_publish_announcement_by_host(event, organizer):
+    announcement = event.publish_announcement(
+        author=organizer,
+        content="Bienvenue à tous !",
+        anonymous=False
+    )
+    assert isinstance(announcement, Announcement)
+    assert announcement in event.announcements
+    assert announcement.is_host_message is True
+    assert announcement.author == organizer
 
 
 def test_user_joins_waitlist(participant, event):

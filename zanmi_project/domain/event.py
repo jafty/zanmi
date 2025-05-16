@@ -48,6 +48,9 @@ class Event:
             message=message
         )
 
+    def publish_announcement(self):
+        return None
+
 
 class Participation:
     
@@ -72,3 +75,21 @@ class Participation:
 
     def accept(self):
         self.status = "ACCEPTED"
+    
+
+class Announcement:
+    def __init__(
+        self,
+        event: Event,
+        author: User,
+        content: str,
+        is_host_message: bool,
+        created_at: datetime = None
+    ):
+        self.event = event
+        self.author = author
+        self.content = content
+        self.is_host_message = is_host_message
+        self.created_at = created_at or datetime.utcnow()
+    
+
