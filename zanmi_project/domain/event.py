@@ -25,6 +25,7 @@ class Event:
         self.time = time
         self.activity_type = activity_type
         self.image_url = image_url
+        self.announcements  = []
 
     def is_past(self, now: datetime) -> bool:
         return self.start_datetime.date() < now.date()
@@ -48,9 +49,27 @@ class Event:
             message=message
         )
 
-    def publish_announcement(self, content: str, organizer: bool):
+    def publish_announcement(self, content: str, is_host_message: bool, announcement_repo):
+        announcement = Announcement(
+            event=self,
+            content=content,
+            is_host_message=is_host_message
+        )
+        self.announcements.append(announcement)
+        announcement_repo.save_announcement(announcement)
+        return announcement
 
-        return None
+
+class Announcement:
+    def __init__(
+        self,
+        event: Event,
+        content: str,
+        is_host_message: bool,
+    ):
+        self.event = event
+        self.content = content
+        self.is_host_message = is_host_message
 
 
 class Participation:
@@ -78,19 +97,5 @@ class Participation:
         self.status = "ACCEPTED"
 
 
-class Announcement:
-    def __init__(
-        self,
-        event: Event,
-        author: User,
-        content: str,
-        is_host_message: bool,
-        created_at: datetime = None
-    ):
-        self.event = event
-        self.author = author
-        self.content = content
-        self.is_host_message = is_host_message
-        self.created_at = created_at or datetime.utcnow()
 
 

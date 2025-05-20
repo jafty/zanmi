@@ -21,7 +21,7 @@ from django.http import JsonResponse
 from .forms import ParticipationForm
 from domain.user import User as DomainUser
 from domain.event import Participation
-from .repositories import DjangoEventRepository, DjangoParticipationRepository, DjangoUserProfileRepository, DjangoNotificationRepository
+from .repositories import DjangoEventRepository, DjangoParticipationRepository, DjangoAnnouncementRepository, DjangoNotificationRepository
 from django.contrib.auth.decorators import login_required
 from .email_notification_gateway import EmailNotificationGateway
 from .forms import ParticipationForm
@@ -40,7 +40,7 @@ def landing(request):
 
 login_required
 def featured_event(request):
-    return redirect('event_detail', event_id=3)
+    return redirect('event_detail', event_id=1)
 
 
 @login_required
@@ -50,6 +50,8 @@ def event_detail(request, event_id):
     event_repo = DjangoEventRepository()
     participation_repo = DjangoParticipationRepository()
     event = get_event_detail(event_id, repo=event_repo)
+    ann_repo = DjangoAnnouncementRepository()
+    announcements = ann_repo.get_announcements(event_id)
     db_participation = get_user_participation(user.id, event_id, participation_repo)
     if db_participation:
         domain_participation = Participation(
@@ -81,6 +83,18 @@ def event_detail(request, event_id):
         "form": form,
         "location": event.location,
     })
+
+
+@require_POST
+@login_required
+def post_announcement(request, event_id):
+    event_repo = DjangoEventRepository()
+    ann_repo = DjangoAnnouncementRepository()
+    domain_user = DomainUser(username=request.user.username)
+    event = event_repo.get_event_by_id(event_id)
+    content = request.POST["message"]
+    event.publish_announcement(content=content, is_host_message=(domain_user.username==event.organizer.username), announcement_repo=ann_repo)
+    return redirect("event_detail", event_id=event_id)
 
 
 @login_required

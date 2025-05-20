@@ -35,3 +35,17 @@ class NotificationDB(models.Model):
     event = models.ForeignKey(EventDB, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+
+
+class AnnouncementDB(models.Model):
+    event_title = models.CharField(max_length=255, db_index=True)
+    content = models.TextField()
+    is_host_message = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        role = "Host" if self.is_host_message else "Participant"
+        return f"[{self.event_title}] {role}: {self.content[:30]}"

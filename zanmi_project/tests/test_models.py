@@ -1,11 +1,11 @@
 import sys
 import os
 import pytest
-from datetime import date, datetime
 from domain.event import Event, Participation, Announcement
 from domain.user import User
 from domain.user_profile import UserProfile
-
+from datetime import datetime, timezone, date
+from unittest.mock import patch
 
 @pytest.fixture
 def  organizer():
@@ -53,6 +53,14 @@ class StubFailedPaymentGateway:
         pass
 
 
+class StubAnnouncementRepository:
+    def __init__(self):
+        self.saved_announcement = None
+
+    def save_announcement(self, announcement):
+        self.saved_announcement = announcement
+
+
 # EVENT ENTITY
 # ----------
 def test_event_is_not_past_if_today(event, current_date):
@@ -83,14 +91,29 @@ def test_user_joins_event_and_gets_to_pay(participant, event):
 
 
 def test_publish_announcement_by_host(event, organizer):
+    repo = StubAnnouncementRepository()
     announcement = event.publish_announcement(
         content="Bienvenue à tous !",
-        organizer=True,
+        is_host_message=True,
+        announcement_repo=repo,
     )
     assert isinstance(announcement, Announcement)
     assert announcement in event.announcements
     assert announcement.is_host_message is True
-    assert announcement.author == organizer
+    assert repo.saved_announcement == announcement
+
+
+def test_publish_announcement_by_participant(event, participant):
+    repo = StubAnnouncementRepository()
+    announcement = event.publish_announcement(
+        content="Salut tout le monde, hâte de vous rencontrer !",
+        is_host_message=False,
+        announcement_repo=repo,
+    )
+    assert isinstance(announcement, Announcement)
+    assert announcement in event.announcements
+    assert announcement.is_host_message is False
+    assert repo.saved_announcement == announcement
 
 
 def test_user_joins_waitlist(participant, event):
@@ -101,7 +124,6 @@ def test_user_joins_waitlist(participant, event):
     assert isinstance(participation, Participation)
     assert participation.user == participant
     assert participation.event == event
-    assert participation.author == organizer
     assert participation.status == "PENDING"
     assert participation.message == "Looking forward to it!"
 

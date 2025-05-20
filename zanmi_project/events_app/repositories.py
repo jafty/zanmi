@@ -1,12 +1,12 @@
 # events_app/repositories.py
-from domain.event import Event, Participation
+from domain.event import Event, Participation, Announcement
 from domain.notification import Notification
 from django.contrib.auth import get_user_model
 from domain.user import User
 from domain.repositories.event_repository import EventRepository
 from domain.repositories.participation_repository import ParticipationRepository
 from domain.repositories.notification_repository import NotificationRepository
-from .models import EventDB, ParticipationDB, NotificationDB
+from .models import EventDB, ParticipationDB, NotificationDB, AnnouncementDB
 from users_app.models import UserProfileDB
 from domain.user_profile import UserProfile
 from domain.user import User
@@ -177,3 +177,25 @@ class DjangoNotificationRepository(NotificationRepository):
     def mark_all_as_read(self, user_id: int):
         NotificationDB.objects.filter(recipient_id=user_id, is_read=False).update(is_read=True)
 
+
+class DjangoAnnouncementRepository:
+
+    def save_announcement(self, announcement):
+        AnnouncementDB.objects.create(
+            event_title=announcement.event.title,
+            content=announcement.content,
+            is_host_message=announcement.is_host_message,
+        )
+
+    def get_announcements(self, event_title):
+        db_announcements = AnnouncementDB.objects.filter(event_title=event_title).order_by('created_at')
+        event = Event(title=event_title, location="", start_datetime=None, organizer=None, price=0.0, description="", time="", activity_type="", image_url="")   
+        announcements = []
+        for db_announcement in db_announcements:
+            announcement = Announcement(
+                event=event,
+                content=db_announcement.content,
+                is_host_message=db_announcement.is_host_message,
+            )
+            announcements.append(announcement)
+        return announcements

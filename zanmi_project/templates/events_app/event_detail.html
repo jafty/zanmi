@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
-
 {% load static %}
 
 {% block title %}{{ event.title }}{% endblock %}
@@ -58,10 +57,37 @@
                 <div class="description-card">
                     <h2 class="pixel-text">About This Event</h2>
                     <p>{{ event.description|safe }}</p>
-
                 </div>
+
+                {% if is_manager or is_accepted %}
+                <!-- Event Chat Section -->
+                <div class="description-card">
+                    <h2 class="pixel-text">Event Chat</h2>
+                    <div class="announcements-container">
+                        <div class="announcements-list">
+                            {% for announcement in announcements %}
+                            <div class="announcement-card {% if announcement.is_host_message %}host{% endif %}">
+                                <p>{{ announcement.content }}</p>
+                                <span class="announcement-badge {% if announcement.is_host_message %}host-badge{% endif %}">
+                                {% if announcement.is_host_message %}Host{% else %}Participant{% endif %}
+                                </span>
+                            </div>
+                            {% endfor %}
+                                <p class="text-muted text-center">No messages yet. Be the first to post!</p>
+                            {% endfor %}
+                        </div>
+
+                        <form class="announcement-form" method="post" action="{% url 'post_announcement' event.id %}">
+                            {% csrf_token %}
+                            <textarea name="message" class="form-control" placeholder="Share updates or ask questions..." rows="3" required></textarea>
+                            <button type="submit" class="primary-btn mt-3">Post Message</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
                 {% if is_manager %}
-                <!-- SECTION : Demandes en attente -->
+                <!-- Pending Requests Section -->
                 <div class="description-card">
                     <h2 class="pixel-text">Pending Requests</h2>
                     <div class="participant-list">
@@ -74,8 +100,7 @@
                                         <a href="{% url 'profile_by_username' p.user.username %}">
                                           {{ p.user.username }}
                                         </a>
-                                      </h4>
-
+                                    </h4>
                                     <p>From {{ p.user.profile.city }} •
                                     {% if p.user.profile.birth_date %}
                                         {{ p.user.profile.age|default:"?" }} years old
@@ -100,7 +125,6 @@
                     </div>
                 </div>
                 {% endif %}
-
             </div>
 
             <!-- Right Column: Join Form -->
@@ -112,15 +136,15 @@
 
                     {% elif is_accepted %}
                         <h2 class="pixel-text text-success">✅ You're In!</h2>
-                        <p>See you there! All the details are now visible. Don’t forget to bring your good vibes 😎</p>
+                        <p>See you there! All the details are now visible. Don't forget to bring your good vibes 😎</p>
 
                     {% elif is_pending %}
                         <h2 class="pixel-text text-warning">⏳ Request Pending</h2>
-                        <p>Your request has been sent and is awaiting approval from the host. You’ll be notified by email soon!</p>
+                        <p>Your request has been sent and is awaiting approval from the host. You'll be notified by email soon!</p>
 
                     {% elif is_rejected %}
                         <h2 class="pixel-text text-danger">❌ Request Rejected</h2>
-                        <p>Sorry, your request wasn’t accepted. But don’t worry — your payment has been <strong>fully refunded</strong>.</p>
+                        <p>Sorry, your request wasn't accepted. But don't worry — your payment has been <strong>fully refunded</strong>.</p>
                         <p>Feel free to explore other events happening soon 🌍</p>
                     {% elif is_past %}
                         <h2 class="pixel-text text-danger">❌ You can not join anymore</h2>
@@ -154,7 +178,6 @@
                         </p>
                     {% endif %}
                 </div>
-
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import event_detail, join_event, manage_participation, notifications_view, featured_event, landing, stripe_webhook, stripe_success, stripe_cancel
+from .views import event_detail, join_event, manage_participation, notifications_view, featured_event, landing, stripe_webhook, stripe_success, stripe_cancel, post_announcement
 from django.shortcuts import redirect
 
 
@@ -18,5 +18,5 @@ urlpatterns = [
     path("stripe_webhook/", stripe_webhook, name="stripe_webhook"),
     path("stripe_success/", stripe_success, name="stripe_success"),
     path("stripe_cancel/", stripe_cancel, name="stripe_cancel"),
-
+    path("events/<int:event_id>/post_announcement/", post_announcement, name="post_announcement"),
 ]
