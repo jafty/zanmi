@@ -4,3 +4,5 @@
 - Age display for managers
 - Change get_from_id on repositories
 - End to end tests
+
+NEXT STEP : GET ANNOUNCEMENTS
