@@ -38,7 +38,7 @@ class NotificationDB(models.Model):
 
 
 class AnnouncementDB(models.Model):
-    event_title = models.CharField(max_length=255, db_index=True)
+    event = models.ForeignKey(EventDB, on_delete=models.CASCADE)
     content = models.TextField()
     is_host_message = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

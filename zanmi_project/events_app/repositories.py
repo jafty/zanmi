@@ -181,21 +181,26 @@ class DjangoNotificationRepository(NotificationRepository):
 class DjangoAnnouncementRepository:
 
     def save_announcement(self, announcement):
+        db_event = EventDB.objects.get(title=announcement.event.title)
         AnnouncementDB.objects.create(
-            event_title=announcement.event.title,
+            event=db_event,
             content=announcement.content,
             is_host_message=announcement.is_host_message,
         )
 
-    def get_announcements(self, event_title):
-        db_announcements = AnnouncementDB.objects.filter(event_title=event_title).order_by('created_at')
-        event = Event(title=event_title, location="", start_datetime=None, organizer=None, price=0.0, description="", time="", activity_type="", image_url="")   
-        announcements = []
-        for db_announcement in db_announcements:
-            announcement = Announcement(
+
+    def get_announcements(self, event):
+        db_event = EventDB.objects.get(title=event.title)  # 🔁
+        db_announcements = AnnouncementDB.objects.filter(event=db_event).order_by("created_at")
+        return [
+            Announcement(
                 event=event,
                 content=db_announcement.content,
                 is_host_message=db_announcement.is_host_message,
             )
-            announcements.append(announcement)
-        return announcements
+            for db_announcement in db_announcements
+        ]
+
+
+
+

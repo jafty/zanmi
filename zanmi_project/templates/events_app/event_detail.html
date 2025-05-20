@@ -65,19 +65,20 @@
                     <h2 class="pixel-text">Event Chat</h2>
                     <div class="announcements-container">
                         <div class="announcements-list">
-                            {% for announcement in announcements %}
+                        {% for announcement in announcements %}
                             <div class="announcement-card {% if announcement.is_host_message %}host{% endif %}">
-                                <p>{{ announcement.content }}</p>
-                                <span class="announcement-badge {% if announcement.is_host_message %}host-badge{% endif %}">
+                            <p>{{ announcement.content }}</p>
+                            <span class="announcement-badge {% if announcement.is_host_message %}host-badge{% endif %}">
                                 {% if announcement.is_host_message %}Host{% else %}Participant{% endif %}
-                                </span>
+                            </span>
                             </div>
-                            {% endfor %}
-                                <p class="text-muted text-center">No messages yet. Be the first to post!</p>
-                            {% endfor %}
+                        {% empty %}
+                            <p class="text-muted text-center">No messages yet. Be the first to post!</p>
+                        {% endfor %}
                         </div>
 
-                        <form class="announcement-form" method="post" action="{% url 'post_announcement' event.id %}">
+
+                        <form class="announcement-form" method="post" action="{% url 'post_announcement' event_id %}">
                             {% csrf_token %}
                             <textarea name="message" class="form-control" placeholder="Share updates or ask questions..." rows="3" required></textarea>
                             <button type="submit" class="primary-btn mt-3">Post Message</button>

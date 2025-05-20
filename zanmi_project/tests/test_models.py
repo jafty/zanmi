@@ -54,11 +54,15 @@ class StubFailedPaymentGateway:
 
 
 class StubAnnouncementRepository:
-    def __init__(self):
+    def __init__(self, announcement1=None, announcement2=None):
         self.saved_announcement = None
+        self.announcements = [announcement1, announcement2]
 
     def save_announcement(self, announcement):
         self.saved_announcement = announcement
+
+    def get_announcements(self, event_title):
+        return self.announcements
 
 
 # EVENT ENTITY
@@ -114,6 +118,24 @@ def test_publish_announcement_by_participant(event, participant):
     assert announcement in event.announcements
     assert announcement.is_host_message is False
     assert repo.saved_announcement == announcement
+
+
+def test_get_announcements_for_event(event):
+    announcement1 = Announcement(
+        event=event,
+        content="Msg #1",
+        is_host_message=True
+    )
+    announcement2 = Announcement(
+        event=event,
+        content="Msg #2",
+        is_host_message=False
+    )
+    repo = StubAnnouncementRepository(announcement1, announcement2)
+    event_announcements = event.get_announcements(
+        announcement_repo=repo,
+    )
+    assert event_announcements == [announcement1, announcement2]
 
 
 def test_user_joins_waitlist(participant, event):

@@ -58,6 +58,11 @@ class Event:
         self.announcements.append(announcement)
         announcement_repo.save_announcement(announcement)
         return announcement
+    
+    def get_announcements(self, announcement_repo):
+        announcements = announcement_repo.get_announcements(self)
+        self.announcements = announcements
+        return announcements
 
 
 class Announcement:
