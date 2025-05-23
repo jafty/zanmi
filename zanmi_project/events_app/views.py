@@ -15,6 +15,7 @@ from services.use_cases import (
     accept_participation,
     reject_participation,
     get_user_notifications,
+    notify_on_announcement_posted,
 )
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -92,9 +93,23 @@ def post_announcement(request, event_id):
     event_repo = DjangoEventRepository()
     ann_repo = DjangoAnnouncementRepository()
     domain_user = DomainUser(username=request.user.username)
+    participation_repo = DjangoParticipationRepository()
+    notification_repo = DjangoNotificationRepository()
+    notification_gateway = EmailNotificationGateway()
     event = event_repo.get_event_by_id(event_id)
     content = request.POST["message"]
     event.publish_announcement(content=content, is_host_message=(domain_user.username==event.organizer.username), announcement_repo=ann_repo)
+    announcement = event.publish_announcement(
+        content=content,
+        is_host_message=(domain_user.username == event.organizer.username),
+        announcement_repo=ann_repo
+    )
+    notify_on_announcement_posted(
+        announcement=announcement,
+        notification_gateway=notification_gateway,
+        notification_repo=notification_repo,
+        participation_repo=participation_repo
+    )
     return redirect("event_detail", event_id=event_id)
 
 

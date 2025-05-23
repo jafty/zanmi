@@ -470,25 +470,73 @@ li.nav-item {
     font-size: 1rem;
 }
 
-/* ========================== */
-/*          FOOTER            */
-/* ========================== */
-
+/* Footer Styles */
 footer {
     background: linear-gradient(to bottom, #1a1a1a, #2a2a2a);
     color: white;
-    padding: 4rem 0;
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 70% 30%, rgba(255, 31, 142, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.footer-content {
+    position: relative;
+    z-index: 1;
+}
+
+.copyright {
+    color: #888;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .footer-links a {
     color: #888;
     text-decoration: none;
-    margin: 0 0.5rem;
+    font-size: 0.9rem;
     transition: color 0.3s;
+    padding: 0.25rem 0;
 }
 
 .footer-links a:hover {
     color: var(--pink-accent);
+}
+
+.separator {
+    color: #444;
+}
+
+@media (max-width: 768px) {
+    .footer-links {
+        flex-direction: column;
+    }
+    
+    .separator {
+        display: none;
+    }
+    
+    .footer-links a {
+        padding: 0.5rem 0;
+    }
 }
 
 /* ==========================

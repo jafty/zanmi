@@ -42,7 +42,7 @@
                     <!-- Formulaire de déconnexion -->
                     <li class="nav-item position-relative">
                         <a class="nav-link" href="{% url 'notifications' %}">
-                            🔔 Notifications
+                            Notifications
                             {% if unread_notifications_count > 0 %}
                                 <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle notification-indicator"></span>
                             {% endif %}
@@ -77,12 +77,17 @@
     <!-- FOOTER (reprenant précisément le design fourni) -->
     <footer>
         <div class="container text-center">
-            <p>&copy; Zanmi 2025. Tous droits réservés.</p>
-            <div class="footer-links">
-                <a href="{% url 'cgv' %}">Terms of Sale</a> |
-                <a href="{% url 'cgu' %}">Terms of Use</a> |
-                <a href="{% url 'confidentialite' %}">Privacy Policy</a> |
-                <a href="{% url 'mentions_legales' %}">Legal Notice</a>
+            <div class="footer-content">
+                <p class="copyright">&copy; {% now "Y" %} Zanmi. Tous droits réservés.</p>
+                <div class="footer-links">
+                    <a href="{% url 'cgv' %}">Terms of Sale</a>
+                    <span class="separator">|</span>
+                    <a href="{% url 'cgu' %}">Terms of Use</a>
+                    <span class="separator">|</span>
+                    <a href="{% url 'confidentialite' %}">Privacy Policy</a>
+                    <span class="separator">|</span>
+                    <a href="{% url 'mentions_legales' %}">Legal Notice</a>
+                </div>
             </div>
         </div>
     </footer>

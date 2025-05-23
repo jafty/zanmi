@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 UserModel = get_user_model()
 
 class EmailNotificationGateway:
+
     def send(self, notification) -> bool:
         domain_user = notification.recipient
         try:
@@ -34,3 +35,7 @@ class EmailNotificationGateway:
         except Exception as e:
             logger.error(f"Email sending failed to {recipient_email}: {e}")
             return False
+
+    def send_many(self, notifications):
+        for notification in notifications:
+            self.send(notification)

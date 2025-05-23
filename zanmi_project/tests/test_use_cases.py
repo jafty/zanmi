@@ -25,18 +25,6 @@ def  organizer():
 
 
 @pytest.fixture
-def  alice():
-    organizer = User(username="Alice")
-    return organizer
-
-
-@pytest.fixture
-def  bob():
-    organizer = User(username="Bob")
-    return organizer
-
-
-@pytest.fixture
 def event(organizer):
     event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer, price=25)
     return event
@@ -136,14 +124,14 @@ class StubNotificationRepository:
 
     def __init__(self, stored_notifications=None):
         self.stored_notifications = stored_notifications or []
-        self.saved = None
+        self.saved = []
 
     def get_notifications_for_user(self, user_id: int):
         return self.stored_notifications
         return []
 
     def save_notification(self, notification):
-        self.saved = notification
+        self.saved.append(notification)
 
 
 def test_get_user_notifications_returns_expected_list(participant, organizer):
@@ -181,9 +169,9 @@ def test_organizer_notified_when_participant_joins(participant, organizer):
     assert gateway.event == event
     assert "requested" in gateway.message.lower() or "wants to join" in gateway.message.lower()
     assert saved is not None
-    assert saved.recipient == organizer
-    assert saved.sender == participant
-    assert "join" in saved.message.lower()
+    assert saved[0].recipient == organizer
+    assert saved[0].sender == participant
+    assert "join" in saved[0].message.lower()
 
 
 def test_participant_notified_when_accepted(participant, organizer):
@@ -205,9 +193,9 @@ def test_participant_notified_when_accepted(participant, organizer):
     assert gateway.event == event
     assert "accepted" in gateway.message.lower()
     assert saved is not None
-    assert saved.recipient == participant
-    assert saved.sender == organizer
-    assert "accepted" in saved.message.lower()
+    assert saved[0].recipient == participant
+    assert saved[0].sender == organizer
+    assert "accepted" in saved[0].message.lower()
 
 
 def test_participant_notified_when_rejected(participant, organizer):
@@ -229,29 +217,39 @@ def test_participant_notified_when_rejected(participant, organizer):
     assert gateway.event == event
     assert "rejected" in gateway.message.lower()
     assert saved is not None
-    assert saved.recipient == participant
-    assert saved.sender == organizer
-    assert "rejected" in saved.message.lower()
+    assert saved[0].recipient == participant
+    assert saved[0].sender == organizer
+    assert "rejected" in saved[0].message.lower()
 
 
-def test_notify_host_and_participants_when_participant_posts(alice, organizer, bob, event):
-    announcement = Announcement(
-        event=event,
-        content="Salut tout le monde !",
-        is_host_message=False
-    )
+def test_notify_host_and_participants_when_participant_posts(organizer, participant, event):
+    bob = User(username="Bob")
+    rejected = User(username="Rejected")
+    announcement = Announcement(event=event, content="Salut tout le monde !", is_host_message=False)
+    participations = [
+        Participation(user=participant, event=event, status="ACCEPTED"),
+        Participation(user=bob, event=event, status="ACCEPTED"),
+        Participation(user=rejected, event=event, status="REJECTED")
+    ]
+    participation_repo = StubParticipationRepository(stored_event_participations=participations)
+    notification_repo = StubNotificationRepository()
     gateway = StubNotificationGateway()
-    repo = StubNotificationRepository()
-    notify_on_announcement_posted(announcement, gateway, repo)
-    recipients = {notification.recipient.username for notification in gateway.sent_many}
-    assert recipients == {"Host", "Bob", "Alice"}
-    saved_notifications_recipients = {notification.recipient.username for notification in repo.saved}
-    assert saved_notifications_recipients == recipients
-    expected_notification_text = f"Un message a été posté pour l'événement {event.title} : {announcement.content}"
-    for n in gateway.sent_many:
-        assert n.message == expected_notification_text
-    for n in repo.saved:
-        assert n.message == expected_notification_text
+    notify_on_announcement_posted(
+        announcement=announcement,
+        notification_gateway=gateway,
+        notification_repo=notification_repo,
+        participation_repo=participation_repo
+    )
+    expected_recipients = {"Alice", "Bob", "Host"}
+    sent_recipients = {n.recipient.username for n in gateway.sent_many}
+    saved_recipients = {n.recipient.username for n in notification_repo.saved}
+    assert sent_recipients == expected_recipients
+    assert saved_recipients == expected_recipients
+    expected_message = f"A message has been posted for event {event.title} : {announcement.content}"
+    for notif in gateway.sent_many + notification_repo.saved:
+        assert notif.message == expected_message
+        assert notif.sender.username == event.organizer.username
+
 
 def test_organizer_rejects_pending_participation(organizer, participant):
     event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer)
@@ -284,10 +282,11 @@ def test_organizer_is_related_to_event(organizer, event):
 
 
 class StubParticipationRepository:
-    def __init__(self, stored_participation=None, stored_participations=None, stored_user_participations=None):
+    def __init__(self, stored_participation=None, stored_participations=None, stored_user_participations=None, stored_event_participations=None):
         self.stored_participation = stored_participation
         self.stored_participations = stored_participations
         self.stored_user_participations = stored_user_participations
+        self.stored_event_participations = stored_event_participations
 
     def get_existing_participation(self, user_id, event_id):
         return self.stored_participation
@@ -295,6 +294,9 @@ class StubParticipationRepository:
     def get_pending_participations(self, event_id):
         return self.stored_participations
 
+    def get_participations_by_event(self, event):
+        return self.stored_event_participations or []
+    
     def get_participations_by_user(self, user_id):
         return self.stored_user_participations
     

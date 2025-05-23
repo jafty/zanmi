@@ -95,6 +95,20 @@ class DjangoParticipationRepository(ParticipationRepository):
             for p in db_participations
         ]
 
+    def get_participations_by_event(self, event: Event) -> list[Participation]:
+        db_event = EventDB.objects.get(title=event.title)
+        db_participations = ParticipationDB.objects.select_related("user").filter(event=db_event)
+        return [
+            Participation(
+                user=User(username=p.user.username),
+                event=event,
+                status=p.status,
+                payment_id=p.payment_id,
+                message=p.message
+            )
+            for p in db_participations
+        ]
+
 
 class DjangoUserProfileRepository(UserProfileRepository):
 
