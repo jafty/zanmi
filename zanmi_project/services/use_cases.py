@@ -101,6 +101,25 @@ def notify_when_participant_joins(participation: Participation, notification_gat
     notification_repo.save_notification(notification)
 
 
+
+def notify_on_announcement_posted(announcement, notification_gateway, notification_repo):
+    event = announcement.event
+    # destinataires : l’hôte + tous les participants
+    recipients = {event.organizer} | {p.user for p in getattr(event, 'participations', [])}
+    # message unique
+    msg = f"Un message a été posté pour l'événement {event.title} : {announcement.content}"
+    # construire toutes les notifications
+    notifs = [
+        Notification(recipient=u, sender=None, message=msg, event=event)
+        for u in recipients
+    ]
+    # persister
+    for n in notifs:
+        notification_repo.save_notification(n)
+    # envoi groupé
+    notification_gateway.send_many(notifs)
+    
+
 def get_user_notifications(user_id: int, notification_repo: NotificationRepository):
     return notification_repo.get_notifications_for_user(user_id)
 

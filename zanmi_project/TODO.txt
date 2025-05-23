@@ -3,4 +3,7 @@
 - Age display for managers
 - Change get_from_id on repositories
 - End to end tests
-- Report system and timestamping for announcements
+- Report system and timestamping for announcements + notification
+- Better profile questions
+- Event categories
+- HTMX

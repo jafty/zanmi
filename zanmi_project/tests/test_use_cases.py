@@ -1,7 +1,7 @@
 import pytest
 from datetime import date, datetime
 from domain.user import User
-from domain.event import Event, Participation
+from domain.event import Event, Participation, Announcement
 from domain.user_profile import UserProfile
 from services.use_cases import *
 from services.queries import *
@@ -21,6 +21,18 @@ def participant():
 @pytest.fixture
 def  organizer():
     organizer = User(username="Host")
+    return organizer
+
+
+@pytest.fixture
+def  alice():
+    organizer = User(username="Alice")
+    return organizer
+
+
+@pytest.fixture
+def  bob():
+    organizer = User(username="Bob")
     return organizer
 
 
@@ -106,11 +118,18 @@ def test_organizer_accepts_pending_participation_with_payment_capture(organizer,
 
 class StubNotificationGateway:
 
+    def __init__(self):
+        self.sent = None
+        self.sent_many = None
+
     def send(self, notification: Notification):
         self.recipient_user = notification.recipient
         self.sender_name = notification.sender.username
         self.event = notification.event
         self.message = notification.message
+
+    def send_many(self, notifications: list[Notification]):
+        self.sent_many = notifications
 
 
 class StubNotificationRepository:
@@ -214,6 +233,25 @@ def test_participant_notified_when_rejected(participant, organizer):
     assert saved.sender == organizer
     assert "rejected" in saved.message.lower()
 
+
+def test_notify_host_and_participants_when_participant_posts(alice, organizer, bob, event):
+    announcement = Announcement(
+        event=event,
+        content="Salut tout le monde !",
+        is_host_message=False
+    )
+    gateway = StubNotificationGateway()
+    repo = StubNotificationRepository()
+    notify_on_announcement_posted(announcement, gateway, repo)
+    recipients = {notification.recipient.username for notification in gateway.sent_many}
+    assert recipients == {"Host", "Bob", "Alice"}
+    saved_notifications_recipients = {notification.recipient.username for notification in repo.saved}
+    assert saved_notifications_recipients == recipients
+    expected_notification_text = f"Un message a été posté pour l'événement {event.title} : {announcement.content}"
+    for n in gateway.sent_many:
+        assert n.message == expected_notification_text
+    for n in repo.saved:
+        assert n.message == expected_notification_text
 
 def test_organizer_rejects_pending_participation(organizer, participant):
     event = Event(title="Sortie", location="Toulouse", start_datetime=datetime(2025, 4, 20), organizer=organizer)
