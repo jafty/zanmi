@@ -99,11 +99,6 @@ def post_announcement(request, event_id):
     event = event_repo.get_event_by_id(event_id)
     content = request.POST["message"]
     event.publish_announcement(content=content, is_host_message=(domain_user.username==event.organizer.username), announcement_repo=ann_repo)
-    announcement = event.publish_announcement(
-        content=content,
-        is_host_message=(domain_user.username == event.organizer.username),
-        announcement_repo=ann_repo
-    )
     notify_on_announcement_posted(
         announcement=announcement,
         notification_gateway=notification_gateway,
