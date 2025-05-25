@@ -1,12 +1,25 @@
 <div class="announcements-list">
-{% for announcement in announcements %}
+  {% for announcement in announcements %}
     <div class="announcement-card {% if announcement.is_host_message %}host{% endif %}">
-    <p>{{ announcement.content }}</p>
-    <span class="announcement-badge {% if announcement.is_host_message %}host-badge{% endif %}">
+      <p>{{ announcement.content }}</p>
+      <span class="announcement-badge {% if announcement.is_host_message %}host-badge{% endif %}">
         {% if announcement.is_host_message %}Host{% else %}Participant{% endif %}
-    </span>
+      </span>
     </div>
-{% empty %}
+  {% empty %}
     <p class="text-muted text-center">No messages yet. Be the first to post!</p>
-{% endfor %}
+  {% endfor %}
 </div>
+
+{% if has_more %}
+  <div class="text-center mt-3">
+    <button 
+      class="primary-btn"
+      hx-get="{% url 'get_announcements' event_id %}?full=true"
+      hx-target="#announcements-wrapper"
+      hx-swap="innerHTML"
+    >
+      Read more
+    </button>
+  </div>
+{% endif %}

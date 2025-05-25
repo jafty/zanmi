@@ -73,9 +73,15 @@ def get_announcements(request, event_id):
     is_accepted = db_participation and db_participation.status == "ACCEPTED"
     if not is_manager and not is_accepted:
         return HttpResponseForbidden("Access denied")
-    announcements = event.get_announcements(announcement_repo=ann_repo)
+    full = request.GET.get("full") == "true"
+    all_announcements = event.get_announcements(announcement_repo=ann_repo)
+    announcements = all_announcements if full else all_announcements[-5:]
+    has_more = not full and len(all_announcements) > 5
     return render(request, "events_app/partials/announcement_list.html", {
-        "announcements": announcements
+        "announcements": announcements,
+        "has_more": has_more,
+        "event_id": event_id,
+        "full": full,
     })
 
 
