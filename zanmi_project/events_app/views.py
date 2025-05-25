@@ -32,7 +32,23 @@ from events_app.models import EventDB
 from django.views.decorators.http import require_POST
 from django.conf import settings
 import stripe
+from django.http import HttpResponseForbidden
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+# UTILITIES
+# ----------
+def get_visible_announcements_for_event(event, user):
+    domain_user = DomainUser(username=user.username)
+    ann_repo = DjangoAnnouncementRepository()
+    participation_repo = DjangoParticipationRepository()
+    db_participation = get_user_participation(user.id, event.id, participation_repo)
+    is_accepted = db_participation and db_participation.status == "ACCEPTED"
+    is_manager = event.is_manageable_by(domain_user)
+    if not is_accepted and not is_manager:
+        return []
+    return event.get_announcements(announcement_repo=ann_repo)
 
 
 def landing(request):
@@ -42,6 +58,25 @@ def landing(request):
 login_required
 def featured_event(request):
     return redirect('event_detail', event_id=1)
+
+
+@login_required
+def get_announcements(request, event_id):
+    user = request.user
+    domain_user = DomainUser(username=user.username)
+    event_repo = DjangoEventRepository()
+    participation_repo = DjangoParticipationRepository()
+    ann_repo = DjangoAnnouncementRepository()
+    event = get_event_detail(event_id, repo=event_repo)
+    db_participation = get_user_participation(user.id, event_id, participation_repo)
+    is_manager = event.is_manageable_by(domain_user)
+    is_accepted = db_participation and db_participation.status == "ACCEPTED"
+    if not is_manager and not is_accepted:
+        return HttpResponseForbidden("Access denied")
+    announcements = event.get_announcements(announcement_repo=ann_repo)
+    return render(request, "events_app/partials/announcements_list.html", {
+        "announcements": announcements
+    })
 
 
 @login_required
@@ -212,6 +247,12 @@ def manage_participation(request, event_id):
     else:
         return redirect("event_detail", event_id=event_id)
     participation_repo.save_participation(updated)
+    if request.htmx:
+        pending_participants = participation_repo.get_pending_participations(event_id)
+        return render(request, "events_app/partials/pending_list.html", {
+            "pending_participants": pending_participants,
+            "event_id": event_id,
+        })
     return redirect("event_detail", event_id=event_id)
 
 

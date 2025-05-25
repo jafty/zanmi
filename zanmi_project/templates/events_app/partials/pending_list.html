@@ -1,0 +1,29 @@
+<div class="participant-list" id="pending-list">
+{% for p in pending_participants %}
+<div class="participant-item">
+    <div class="participant-info">
+        <img src="{{ p.user.profile.avatar.url }}" alt="Avatar" class="participant-avatar" />
+        <div class="participant-details">
+            <h4>
+                <a href="{% url 'profile_by_username' p.user.username %}">
+                    {{ p.user.username }}
+                </a>
+            </h4>
+            <p>From {{ p.user.profile.city }}</p>
+            <p class="participant-message">{{ p.message|default:"No message." }}</p>
+        </div>
+    </div>
+    <div class="participant-actions">
+        <form method="post" hx-post="{% url 'manage_participation' event_id %}" hx-target="#pending-list" hx-swap="outerHTML">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ p.user.id }}">
+            <button type="submit" name="action" value="accept" class="accept-btn">Accept</button>
+            <button type="submit" name="action" value="reject" class="reject-btn">Reject</button>
+            <p class="text-muted small mt-1">💸 Refund will be issued upon rejection</p>
+        </form>
+    </div>                            
+</div>
+{% empty %}
+    <p>No pending requests.</p>
+{% endfor %}
+</div>
