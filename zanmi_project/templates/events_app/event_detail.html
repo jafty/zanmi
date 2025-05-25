@@ -64,13 +64,15 @@
                 <div class="description-card">
                     <h2 class="pixel-text">Event Chat</h2>
                     <div class="announcements-container">
-                        <div 
-                        hx-get="{% url 'get_announcements' event_id %}" 
-                        hx-trigger="every 5s" 
-                        hx-swap="outerHTML"
-                        >
-                            {% include "events_app/partials/announcement_list.html" %}
-                        </div>
+                    <div 
+                    id="announcements-wrapper"
+                    hx-get="{% url 'get_announcements' event_id %}" 
+                    hx-trigger="every 5s"
+                    hx-swap="innerHTML"
+                    >
+                        {% include "events_app/partials/announcement_list.html" %}
+                    </div>
+
                         <form class="announcement-form" method="post" action="{% url 'post_announcement' event_id %}">
                             {% csrf_token %}
                             <textarea name="message" class="form-control" placeholder="Share updates or ask questions..." rows="3" required></textarea>

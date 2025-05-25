@@ -1,4 +1,4 @@
-<div class="announcements-list" id="announcements-list">
+<div class="announcements-list">
 {% for announcement in announcements %}
     <div class="announcement-card {% if announcement.is_host_message %}host{% endif %}">
     <p>{{ announcement.content }}</p>
