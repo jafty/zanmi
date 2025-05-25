@@ -74,7 +74,7 @@ def get_announcements(request, event_id):
     if not is_manager and not is_accepted:
         return HttpResponseForbidden("Access denied")
     announcements = event.get_announcements(announcement_repo=ann_repo)
-    return render(request, "events_app/partials/announcements_list.html", {
+    return render(request, "events_app/partials/announcement_list.html", {
         "announcements": announcements
     })
 
