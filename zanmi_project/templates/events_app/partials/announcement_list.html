@@ -1,5 +1,4 @@
-<div id="announcements-wrapper">
-  <div class="announcements-list">
+<div class="announcements-list">
   {% for announcement in announcements %}
     <div class="announcement-card {% if announcement.is_host_message %}host{% endif %}">
       <p>{{ announcement.content }}</p>
@@ -10,19 +9,18 @@
   {% empty %}
     <p class="text-muted text-center">No messages yet. Be the first to post!</p>
   {% endfor %}
-  </div>
 </div>
 
 {% if has_more %}
-  <p class="mt-2">
+  <div class="text-center mt-3">
     <a 
       href="#"
       class="read-more-link"
       hx-get="{% url 'get_announcements' event_id %}?full=true"
-      hx-target="#announcements-wrapper"
+      hx-target="#announcements-list-wrapper"
       hx-swap="outerHTML"
     >
-      Read more messages
+      ⬇️ <strong style="color: var(--primary); text-decoration: underline;">Read more messages</strong>
     </a>
-  </p>
+  </div>
 {% endif %}

@@ -70,15 +70,17 @@
           <div class="announcements-container">
 
             <div id="announcements-wrapper"
-              {% if not full %}
                 hx-get="{% url 'get_announcements' event_id %}"
                 hx-trigger="every 5s"
-                hx-target="#announcements-wrapper"
-                hx-swap="outerHTML"
-              {% endif %}
-            >
-              {% include "events_app/partials/announcement_list.html" %}
+                hx-target="#announcements-list-wrapper"
+                hx-swap="outerHTML">
+
+                <div id="announcements-list-wrapper">
+                    {% include "events_app/partials/announcement_list.html" %}
+                </div>
+
             </div>
+
 
             <form class="announcement-form mt-3" method="post" action="{% url 'post_announcement' event_id %}">
               {% csrf_token %}
