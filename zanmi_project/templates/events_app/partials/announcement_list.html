@@ -14,10 +14,10 @@
 </div>
 
 {% if has_more %}
-  <p class="text-center mt-2">
+  <p class="mt-2">
     <a 
       href="#"
-      class="text-muted small"
+      class="read-more-link"
       hx-get="{% url 'get_announcements' event_id %}?full=true"
       hx-target="#announcements-wrapper"
       hx-swap="outerHTML"
