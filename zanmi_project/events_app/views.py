@@ -93,7 +93,9 @@ def event_detail(request, event_id):
     participation_repo = DjangoParticipationRepository()
     event = get_event_detail(event_id, repo=event_repo)
     ann_repo = DjangoAnnouncementRepository()
-    announcements = event.get_announcements(announcement_repo=ann_repo)
+    all_announcements = event.get_announcements(announcement_repo=ann_repo)
+    last_announcements = all_announcements[-5:]
+    has_more = len(all_announcements) > 5
     db_participation = get_user_participation(user.id, event_id, participation_repo)
     if db_participation:
         domain_participation = Participation(
@@ -114,7 +116,7 @@ def event_detail(request, event_id):
     form = ParticipationForm()
     return render(request, "events_app/event_detail.html", {
         "event": event,
-        "announcements": announcements,
+        "announcements": last_announcements,
         "is_manager": is_manager,
         "is_unrelated": is_unrelated,
         "is_accepted": domain_participation.is_accepted() if domain_participation else False,
@@ -125,6 +127,8 @@ def event_detail(request, event_id):
         "pending_participants": pending_participants,
         "form": form,
         "location": event.location,
+        "has_more": has_more,
+        "full": False,
     })
 
 

@@ -5,145 +5,160 @@
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block content %}
+
 <!-- Hero Section -->
 <section class="event-hero">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <div class="event-image">
-                    <img src="{{ event.image_url }}" alt="{{ event.title }}">
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="event-details">
-                    <span class="event-type">{{ event.activity_type }}</span>
-                    <h1 class="pixel-text">{{ event.title }}</h1>
-                    <div class="event-meta">
-                        <div class="meta-item">
-                            <img src="https://api.iconify.design/mdi:calendar.svg" alt="Date">
-                            <span>{{ event.start_datetime|date:"F j, Y" }}</span>
-                        </div>
-                        <div class="meta-item">
-                            <img src="https://api.iconify.design/mdi:clock.svg" alt="Time">
-                            <span>{{ event.time }}</span>
-                        </div>
-                        <div class="meta-item">
-                            <img src="https://api.iconify.design/mdi:map-marker.svg" alt="Location">
-                            <span>
-                                {% if is_manager or is_accepted %}
-                                    {{ event.location }}
-                                {% else %}
-                                    Hidden until booking
-                                {% endif %}
-                            </span>
-                        </div>
-                        <div class="meta-item">
-                            <img src="https://api.iconify.design/mdi:ticket.svg" alt="Price">
-                            <span>{{ event.price }}€ per person</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <div class="event-image">
+          <img src="{{ event.image_url }}" alt="{{ event.title }}">
         </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="event-details">
+          <span class="event-type">{{ event.activity_type }}</span>
+          <h1 class="pixel-text">{{ event.title }}</h1>
+          <div class="event-meta">
+            <div class="meta-item">
+              <img src="https://api.iconify.design/mdi:calendar.svg" alt="Date">
+              <span>{{ event.start_datetime|date:"F j, Y" }}</span>
+            </div>
+            <div class="meta-item">
+              <img src="https://api.iconify.design/mdi:clock.svg" alt="Time">
+              <span>{{ event.time }}</span>
+            </div>
+            <div class="meta-item">
+              <img src="https://api.iconify.design/mdi:map-marker.svg" alt="Location">
+              <span>
+                {% if is_manager or is_accepted %}
+                  {{ event.location }}
+                {% else %}
+                  Hidden until booking
+                {% endif %}
+              </span>
+            </div>
+            <div class="meta-item">
+              <img src="https://api.iconify.design/mdi:ticket.svg" alt="Price">
+              <span>{{ event.price }}€ per person</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
 <!-- Description + Join Section -->
 <section class="event-description">
-    <div class="container">
-        <div class="row">
-            <!-- Left Column: Description -->
-            <div class="col-lg-8">
-                <div class="description-card">
-                    <h2 class="pixel-text">About This Event</h2>
-                    <p>{{ event.description|safe }}</p>
-                </div>
+  <div class="container">
+    <div class="row">
 
-                {% if is_manager or is_accepted %}
-                <!-- Event Chat Section -->
-                <div class="description-card">
-                    <h2 class="pixel-text">Event Chat</h2>
-                    <div class="announcements-container">
-                    <div 
-                    id="announcements-wrapper"
-                    hx-get="{% url 'get_announcements' event_id %}" 
-                    hx-trigger="every 5s"
-                    hx-swap="innerHTML"
-                    >
-                        {% include "events_app/partials/announcement_list.html" %}
-                    </div>
+      <!-- Left Column -->
+      <div class="col-lg-8">
 
-                        <form class="announcement-form" method="post" action="{% url 'post_announcement' event_id %}">
-                            {% csrf_token %}
-                            <textarea name="message" class="form-control" placeholder="Share updates or ask questions..." rows="3" required></textarea>
-                            <button type="submit" class="primary-btn mt-3">Post Message</button>
-                        </form>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if is_manager %}
-                <!-- Pending Requests Section -->
-                <div class="description-card">
-                    <h2 class="pixel-text">Pending Requests</h2>
-                    {% include "events_app/partials/pending_list.html" %}
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Right Column: Join Form -->
-            <div class="col-lg-4">
-                <div class="join-form-card">
-                    {% if is_manager %}
-                        <h2 class="pixel-text">🎤 You're the Host!</h2>
-                        <p>Welcome back, chief. You can manage requests just below 👇</p>
-
-                    {% elif is_accepted %}
-                        <h2 class="pixel-text text-success">✅ You're In!</h2>
-                        <p>See you there! All the details are now visible. Don't forget to bring your good vibes 😎</p>
-
-                    {% elif is_pending %}
-                        <h2 class="pixel-text text-warning">⏳ Request Pending</h2>
-                        <p>Your request has been sent and is awaiting approval from the host. You'll be notified by email soon!</p>
-
-                    {% elif is_rejected %}
-                        <h2 class="pixel-text text-danger">❌ Request Rejected</h2>
-                        <p>Sorry, your request wasn't accepted. But don't worry — your payment has been <strong>fully refunded</strong>.</p>
-                        <p>Feel free to explore other events happening soon 🌍</p>
-                    {% elif is_past %}
-                        <h2 class="pixel-text text-danger">❌ You can not join anymore</h2>
-                        <p>This event is either past due, either canceled.</p>
-                    {% else %}
-                        <h2 class="pixel-text">Join Event</h2>
-                        {% if not user.is_authenticated %}
-                            <a href="{% url 'register' %}?next={% url 'event_detail' event_id %}" class="primary-btn w-100 mb-2">
-                                Sign Up & Join
-                            </a>
-                        {% else %}
-                            <form method="post" action="{% url 'join_event' event_id %}">
-                                {% csrf_token %}
-                                {{ form.non_field_errors }}
-                                <div class="mb-3">
-                                    {{ form.message.label_tag }}
-                                    {{ form.message|add_class:"form-control" }}
-                                    {% if form.message.errors %}
-                                        <div class="text-danger small">{{ form.message.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                <button type="submit" class="primary-btn w-100">Request to Join</button>
-                            </form>
-                            <p class="mt-2 text-muted small text-center">📩 Your request will be reviewed by the host.</p>
-                        {% endif %}
-
-                        <p class="mt-2 text-muted small text-center">
-                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/stripe.svg" alt="Stripe" width="18" style="vertical-align: middle; margin-right: 4px;">
-                            Secure checkout powered by Stripe.<br>
-                            You will be <strong>fully refunded</strong> if your request is not accepted.
-                        </p>
-                    {% endif %}
-                </div>
-            </div>
+        <!-- Description -->
+        <div class="description-card">
+          <h2 class="pixel-text">About This Event</h2>
+          <p>{{ event.description|safe }}</p>
         </div>
+
+        {% if is_manager or is_accepted %}
+        <!-- Event Chat -->
+        <div class="description-card">
+          <h2 class="pixel-text">Event Chat</h2>
+          <div class="announcements-container">
+
+            <div id="announcements-wrapper"
+              {% if not full %}
+                hx-get="{% url 'get_announcements' event_id %}"
+                hx-trigger="every 5s"
+                hx-target="#announcements-wrapper"
+                hx-swap="outerHTML"
+              {% endif %}
+            >
+              {% include "events_app/partials/announcement_list.html" %}
+            </div>
+
+            <form class="announcement-form mt-3" method="post" action="{% url 'post_announcement' event_id %}">
+              {% csrf_token %}
+              <textarea name="message" class="form-control" placeholder="Share updates or ask questions..." rows="3" required></textarea>
+              <button type="submit" class="primary-btn mt-3">Post Message</button>
+            </form>
+
+          </div>
+        </div>
+        {% endif %}
+
+        {% if is_manager %}
+        <!-- Pending Requests -->
+        <div class="description-card">
+          <h2 class="pixel-text">Pending Requests</h2>
+          {% include "events_app/partials/pending_list.html" %}
+        </div>
+        {% endif %}
+
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-lg-4">
+        <div class="join-form-card">
+
+          {% if is_manager %}
+            <h2 class="pixel-text">🎤 You're the Host!</h2>
+            <p>Welcome back, chief. You can manage requests just below 👇</p>
+
+          {% elif is_accepted %}
+            <h2 class="pixel-text text-success">✅ You're In!</h2>
+            <p>See you there! All the details are now visible. Don't forget to bring your good vibes 😎</p>
+
+          {% elif is_pending %}
+            <h2 class="pixel-text text-warning">⏳ Request Pending</h2>
+            <p>Your request has been sent and is awaiting approval from the host. You'll be notified by email soon!</p>
+
+          {% elif is_rejected %}
+            <h2 class="pixel-text text-danger">❌ Request Rejected</h2>
+            <p>Sorry, your request wasn't accepted. But don't worry — your payment has been <strong>fully refunded</strong>.</p>
+            <p>Feel free to explore other events happening soon 🌍</p>
+
+          {% elif is_past %}
+            <h2 class="pixel-text text-danger">❌ You can not join anymore</h2>
+            <p>This event is either past due, either canceled.</p>
+
+          {% else %}
+            <h2 class="pixel-text">Join Event</h2>
+
+            {% if not user.is_authenticated %}
+              <a href="{% url 'register' %}?next={% url 'event_detail' event_id %}" class="primary-btn w-100 mb-2">Sign Up & Join</a>
+            {% else %}
+              <form method="post" action="{% url 'join_event' event_id %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="mb-3">
+                  {{ form.message.label_tag }}
+                  {{ form.message|add_class:"form-control" }}
+                  {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors }}</div>
+                  {% endif %}
+                </div>
+                <button type="submit" class="primary-btn w-100">Request to Join</button>
+              </form>
+              <p class="mt-2 text-muted small text-center">📩 Your request will be reviewed by the host.</p>
+            {% endif %}
+
+            <p class="mt-2 text-muted small text-center">
+              <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/stripe.svg" alt="Stripe" width="18" style="vertical-align: middle; margin-right: 4px;">
+              Secure checkout powered by Stripe.<br>
+              You will be <strong>fully refunded</strong> if your request is not accepted.
+            </p>
+
+          {% endif %}
+
+        </div>
+      </div>
+
     </div>
+  </div>
 </section>
+
 {% endblock %}
