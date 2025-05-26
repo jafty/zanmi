@@ -71,17 +71,29 @@ def get_announcements(request, event_id):
     db_participation = get_user_participation(user.id, event_id, participation_repo)
     is_manager = event.is_manageable_by(domain_user)
     is_accepted = db_participation and db_participation.status == "ACCEPTED"
+    
     if not is_manager and not is_accepted:
         return HttpResponseForbidden("Access denied")
-    full = request.GET.get("full") == "true"
+    
+    # Récupère le paramètre 'full'
+    full_view = request.GET.get("full") == "true" 
+    
     all_announcements = event.get_announcements(announcement_repo=ann_repo)
-    announcements = all_announcements if full else all_announcements[-5:]
-    has_more = not full and len(all_announcements) > 5
+
+    # Si on demande la vue complète, on renvoie toutes les annonces
+    if full_view:
+        announcements_to_display = all_announcements
+        has_more = False # Plus besoin du bouton "Read more" en vue complète
+    else:
+        # Sinon, on renvoie les 5 dernières annonces pour le polling et la vue initiale
+        announcements_to_display = all_announcements[-5:]
+        has_more = len(all_announcements) > 5
+
     return render(request, "events_app/partials/announcement_list.html", {
-        "announcements": announcements,
+        "announcements": announcements_to_display,
         "has_more": has_more,
         "event_id": event_id,
-        "full": full,
+        "full": full_view, # Important : passe cette variable au template
     })
 
 

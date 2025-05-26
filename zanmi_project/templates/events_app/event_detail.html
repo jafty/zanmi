@@ -64,31 +64,21 @@
         </div>
 
         {% if is_manager or is_accepted %}
-        <!-- Event Chat Section -->
-        <div class="description-card">
-          <h2 class="pixel-text">Event Chat</h2>
-          <div class="announcements-container">
+          <div class="description-card">
+            <h2 class="pixel-text">Event Chat</h2>
+            <div class="announcements-container">
 
-            <!-- Liste des annonces -->
-            <div id="announcements-list-wrapper"
-                {% if not full %}
-                  hx-get="{% url 'get_announcements' event_id %}"
-                  hx-trigger="every 5s"
-                  hx-swap="outerHTML"
-                {% endif %}
-            >
-              {% include "events_app/partials/announcement_list.html" %}
+              {# Le polling et le bouton sont gérés à l'intérieur du partiel #}
+              {% include "events_app/partials/announcement_list.html" with event_id=event_id announcements=announcements has_more=has_more full=full %}
+
+              <form class="announcement-form" method="post" action="{% url 'post_announcement' event_id %}">
+                {% csrf_token %}
+                <textarea name="message" class="form-control" placeholder="Share updates or ask questions..." rows="3" required></textarea>
+                <button type="submit" class="primary-btn mt-3">Post Message</button>
+              </form>
+
             </div>
-
-            <!-- Formulaire -->
-            <form class="announcement-form" method="post" action="{% url 'post_announcement' event_id %}">
-              {% csrf_token %}
-              <textarea name="message" class="form-control" placeholder="Share updates or ask questions..." rows="3" required></textarea>
-              <button type="submit" class="primary-btn mt-3">Post Message</button>
-            </form>
-
           </div>
-        </div>
         {% endif %}
 
 
