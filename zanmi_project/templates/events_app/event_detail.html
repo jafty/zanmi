@@ -69,16 +69,14 @@
           <h2 class="pixel-text">Event Chat</h2>
           <div class="announcements-container">
 
-            <!-- Poller permanent -->
-            <div id="announcements-poller"
-                hx-get="{% url 'get_announcements' event_id %}"
-                hx-trigger="every 5s"
-                hx-target="#announcements-list-wrapper"
-                hx-swap="outerHTML">
-            </div>
-
-            <!-- Liste des annonces (5 ou toutes) -->
-            <div id="announcements-list-wrapper">
+            <!-- Liste des annonces -->
+            <div id="announcements-list-wrapper"
+                {% if not full %}
+                  hx-get="{% url 'get_announcements' event_id %}"
+                  hx-trigger="every 5s"
+                  hx-swap="outerHTML"
+                {% endif %}
+            >
               {% include "events_app/partials/announcement_list.html" %}
             </div>
 
@@ -92,6 +90,7 @@
           </div>
         </div>
         {% endif %}
+
 
 
         {% if is_manager %}
