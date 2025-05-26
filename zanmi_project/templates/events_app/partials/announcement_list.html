@@ -19,8 +19,10 @@
       hx-get="{% url 'get_announcements' event_id %}?full=true"
       hx-target="#announcements-list-wrapper"
       hx-swap="outerHTML"
+      style="color: var(--primary); text-decoration: underline; font-weight: 600;"
     >
-      ⬇️ <strong style="color: var(--primary); text-decoration: underline;">Read more messages</strong>
+      ⬇️ Read more messages
     </a>
   </div>
 {% endif %}
+

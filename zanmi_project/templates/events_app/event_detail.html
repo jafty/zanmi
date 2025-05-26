@@ -64,25 +64,26 @@
         </div>
 
         {% if is_manager or is_accepted %}
-        <!-- Event Chat -->
+        <!-- Event Chat Section -->
         <div class="description-card">
           <h2 class="pixel-text">Event Chat</h2>
           <div class="announcements-container">
 
-            <div id="announcements-wrapper"
+            <!-- Poller permanent -->
+            <div id="announcements-poller"
                 hx-get="{% url 'get_announcements' event_id %}"
                 hx-trigger="every 5s"
                 hx-target="#announcements-list-wrapper"
                 hx-swap="outerHTML">
-
-                <div id="announcements-list-wrapper">
-                    {% include "events_app/partials/announcement_list.html" %}
-                </div>
-
             </div>
 
+            <!-- Liste des annonces (5 ou toutes) -->
+            <div id="announcements-list-wrapper">
+              {% include "events_app/partials/announcement_list.html" %}
+            </div>
 
-            <form class="announcement-form mt-3" method="post" action="{% url 'post_announcement' event_id %}">
+            <!-- Formulaire -->
+            <form class="announcement-form" method="post" action="{% url 'post_announcement' event_id %}">
               {% csrf_token %}
               <textarea name="message" class="form-control" placeholder="Share updates or ask questions..." rows="3" required></textarea>
               <button type="submit" class="primary-btn mt-3">Post Message</button>
@@ -91,6 +92,7 @@
           </div>
         </div>
         {% endif %}
+
 
         {% if is_manager %}
         <!-- Pending Requests -->
