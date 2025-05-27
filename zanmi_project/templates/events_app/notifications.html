@@ -26,7 +26,6 @@
                                         </a>
                                         {{ notification.message }}
                                     {% else %}
-                                        Une annonce a été publiée pour l'événement 
                                         <a href="{% url 'event_detail' notification.event.id %}" class="event-link" style="color: white !important">
                                             {{ notification.event.title }}
                                         </a>:
