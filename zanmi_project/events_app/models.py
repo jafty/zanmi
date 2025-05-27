@@ -46,6 +46,3 @@ class AnnouncementDB(models.Model):
     class Meta:
         ordering = ['created_at']
 
-    def __str__(self):
-        role = "Host" if self.is_host_message else "Participant"
-        return f"[{self.event_title}] {role}: {self.content[:30]}"
