@@ -248,7 +248,7 @@ def test_notify_host_and_participants_when_participant_posts(organizer, particip
     expected_message = f"A message has been posted for event {event.title} : {announcement.content}"
     for notif in gateway.sent_many + notification_repo.saved:
         assert notif.message == expected_message
-        assert notif.sender.username == event.organizer.username
+        assert notif.sender == None
 
 
 def test_organizer_rejects_pending_participation(organizer, participant):

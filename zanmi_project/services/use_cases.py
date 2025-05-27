@@ -65,7 +65,7 @@ def reject_participation(organizer: User, participation: Participation, payment_
 
 
 def notify_when_accepted(participation: Participation, notification_gateway, notification_repo):
-    message = f" accepted to the event on {participation.event.start_datetime.strftime('%Y-%m-%d')}!"
+    message = f" accepted you to {participation.event.title}!"
     notification = Notification(
         recipient=participation.user,
         sender=participation.event.organizer,
@@ -77,7 +77,7 @@ def notify_when_accepted(participation: Participation, notification_gateway, not
 
 
 def notify_when_rejected(participation: Participation, notification_gateway, notification_repo):
-    message = f" unfortunately rejected you for the event on {participation.event.start_datetime.strftime('%Y-%m-%d')}."
+    message = f" unfortunately rejected you for  {participation.event.title}. The event might be full, or the organizer estimated that it would not be suitable for you. Your credit card has not been debited."
     notification = Notification(
         recipient=participation.user,
         sender=participation.event.organizer,
@@ -90,7 +90,7 @@ def notify_when_rejected(participation: Participation, notification_gateway, not
 
 def notify_when_participant_joins(participation: Participation, notification_gateway, notification_repo):
     print("NOTIFYING")
-    message = f"{participation.user.username} has requested to join your event on {participation.event.start_datetime.strftime('%Y-%m-%d')}."
+    message = f" has requested to join {participation.event.title}."
     notification = Notification(
         recipient=participation.event.organizer,
         sender=participation.user,
@@ -110,7 +110,7 @@ def notify_on_announcement_posted(announcement, notification_gateway, notificati
     notifs = [
         Notification(
             recipient=recipient,
-            sender=event.organizer,
+            sender=None,
             message=text,
             event=event
         )
