@@ -106,7 +106,7 @@ def notify_on_announcement_posted(announcement, notification_gateway, notificati
     participations = participation_repo.get_participations_by_event(event)
     accepted_users = [p.user for p in participations if p.status == "ACCEPTED"]
     recipients = accepted_users + [event.organizer]
-    text = f"A message has been posted for event {event.title} : {announcement.content}"
+    text = f"A message has been posted : {announcement.content}"
     notifs = [
         Notification(
             recipient=recipient,
