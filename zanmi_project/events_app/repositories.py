@@ -156,7 +156,10 @@ class DjangoNotificationRepository(NotificationRepository):
 
     def save_notification(self, notification: Notification) -> None:
         recipient = UserDB.objects.get(username=notification.recipient.username)
-        sender = UserDB.objects.get(username=notification.sender.username)
+        if notification.sender is None:
+            sender = None
+        else:
+            sender = UserDB.objects.get(username=notification.sender.username)
         db_event = EventDB.objects.get(
             title=notification.event.title,
         )
@@ -175,7 +178,7 @@ class DjangoNotificationRepository(NotificationRepository):
         return [
             Notification(
                 recipient=User(username=n.recipient.username),
-                sender=User(username=n.sender.username),
+                sender=User(username=n.sender.username) if n.sender else None,
                 message=n.message,
                 event=Event(
                     title=n.event.title,
