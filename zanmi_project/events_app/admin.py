@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import EventDB, ParticipationDB, NotificationDB
+from .models import EventDB, ParticipationDB, NotificationDB, AnnouncementDB
 
 @admin.register(EventDB)
 class EventAdmin(admin.ModelAdmin):
@@ -15,3 +15,7 @@ class ParticipationAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('sender', 'recipient', 'event', 'message')
 
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('event', 'is_host_message', 'created_at')
+    list_filter = ('is_host_message',)
+    search_fields = ('content',)
