@@ -15,7 +15,8 @@ class ParticipationAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('sender', 'recipient', 'event', 'message')
 
-class AnnouncementAdmin(AnnouncementDB):
+@admin.register(AnnouncementDB)
+class AnnouncementAdmin(admin.ModelAdmin):
     list_display = ('event', 'is_host_message', 'created_at')
     list_filter = ('is_host_message',)
     search_fields = ('content',)
