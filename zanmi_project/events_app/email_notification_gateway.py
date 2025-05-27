@@ -17,7 +17,13 @@ class EmailNotificationGateway:
             return False
         message_body = notification.message
         recipient_email = django_user.email
-        email_subject = 'New Notification from ' + notification.sender.username + ' about ' + notification.event.title 
+        if notification.sender is None:
+            sender_username = "Zanmi Team"
+            sender_email = settings.DEFAULT_FROM_EMAIL
+        else:
+            sender_username = notification.sender.username
+
+        email_subject = 'New Notification from ' + sender_username + ' about ' + notification.event.title 
         from_email = settings.DEFAULT_FROM_EMAIL
         try:
             print(f"Sending email to {recipient_email}: {message_body}")
