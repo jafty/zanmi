@@ -20,13 +20,16 @@
                             </div>
                             <div class="notification-details">
                                 <div class="notification-message">
+                                        <a href="{% url 'event_detail' notification.event.id %}" class="event-link" style="color: rgb(228, 36, 180) !important">
+                                            {{ notification.event.title }}
+                                        </a>:
                                     {% if notification.sender %}
                                         <a href="{% url 'profile_by_username' notification.sender.username %}" class="organizer-link">
                                             {{ notification.sender.username }}
                                         </a>
                                         {{ notification.message }}
                                     {% else %}
-                                        <a href="{% url 'event_detail' notification.event.id %}" class="event-link" style="color: white !important">
+                                        <a href="{% url 'event_detail' notification.event.id %}" class="event-link" style="color: rgb(228, 36, 180) !important">
                                             {{ notification.event.title }}
                                         </a>:
                                         <br>
