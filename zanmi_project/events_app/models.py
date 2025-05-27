@@ -30,7 +30,7 @@ class ParticipationDB(models.Model):
 
 class NotificationDB(models.Model):
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_notifications")
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_notifications")
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_notifications", null=True, blank=True)
     message = models.TextField()
     event = models.ForeignKey(EventDB, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
