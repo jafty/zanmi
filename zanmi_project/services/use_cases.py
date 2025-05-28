@@ -172,38 +172,42 @@ def create_or_update_user_profile(
     languages_spoken: str = "",
     centers_of_interest: str = "",
     event_expectations: str = "",
-    activity_preferences: str = "",
+    perfect_outing_description: str = "",
+    music_preference: str = "",
+    fun_fact: str = "",
     group_size_preference: str = "",
     dietary_restrictions: str = "",
-    avatar = None,
+    avatar=None,
     is_certified: bool = False,
 ) -> UserProfile:
-        try:
-            existing_profile = repo.get_by_user_id(user_id)
-        except ValueError:
-            existing_profile = UserProfile(
-                user=User(username=username, id=user_id),
-                city=city,
-                country=country,
-                birth_date=birth_date,
-                is_certified=is_certified,
-            )
-        existing_profile.user.username = username
-        existing_profile.city = city
-        existing_profile.country = country
-        if birth_date:
-            existing_profile.birth_date = birth_date
-        existing_profile.languages_spoken = languages_spoken
-        existing_profile.description = description
-        existing_profile.centers_of_interest = centers_of_interest
-        existing_profile.event_expectations = event_expectations
-        existing_profile.activity_preferences = activity_preferences
-        existing_profile.group_size_preference = group_size_preference
-        existing_profile.dietary_restrictions = dietary_restrictions
-        existing_profile.is_certified = is_certified
-        if avatar:
-            existing_profile.avatar = avatar
-        print("EXISTING PROFILE")
-        print(existing_profile.description)
-        repo.save_user_profile(existing_profile)
-        return existing_profile
+    try:
+        existing_profile = repo.get_by_user_id(user_id)
+    except ValueError:
+        existing_profile = UserProfile(
+            user=User(username=username, id=user_id),
+            city=city,
+            country=country,
+            birth_date=birth_date,
+            is_certified=is_certified,
+        )
+    existing_profile.user.username = username
+    existing_profile.city = city
+    existing_profile.country = country
+    if birth_date:
+        existing_profile.birth_date = birth_date
+    existing_profile.languages_spoken = languages_spoken
+    existing_profile.description = description
+    existing_profile.centers_of_interest = centers_of_interest
+    existing_profile.event_expectations = event_expectations
+    existing_profile.perfect_outing_description = perfect_outing_description
+    existing_profile.music_preference = music_preference
+    existing_profile.fun_fact = fun_fact
+    existing_profile.group_size_preference = group_size_preference
+    existing_profile.dietary_restrictions = dietary_restrictions
+    existing_profile.is_certified = is_certified
+    if avatar:
+        existing_profile.avatar = avatar
+
+    repo.save_user_profile(existing_profile)
+    return existing_profile
+

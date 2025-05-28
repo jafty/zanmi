@@ -3,3 +3,6 @@
 - Change get_from_id on repositories
 - End to end tests
 - Better profile questions
+- Not notify announcer
+- Better landing page
+- Less Sassy

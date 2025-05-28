@@ -56,9 +56,18 @@
                     {% if profile.event_expectations %}
                         <p><strong>Why I'm here:</strong> {{ profile.event_expectations }}</p>
                     {% endif %}
-                    {% if profile.activity_preferences %}
-                        <p><strong>Preferred activities:</strong> {{ profile.activity_preferences }}</p>
+                    {% if profile.perfect_outing_description %}
+                    <p><strong>Perfect outing:</strong> {{ profile.perfect_outing_description }}</p>
                     {% endif %}
+
+                    {% if profile.music_preference %}
+                    <p><strong>Music preference:</strong> {{ profile.music_preference }}</p>
+                    {% endif %}
+
+                    {% if profile.fun_fact %}
+                    <p><strong>Fun fact:</strong> {{ profile.fun_fact }}</p>
+                    {% endif %}
+
                     {% if profile.group_size_preference %}
                         <p><strong>Group size preference:</strong> {{ profile.group_size_preference }}</p>
                     {% endif %}

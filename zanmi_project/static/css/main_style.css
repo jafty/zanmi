@@ -374,6 +374,78 @@ li.nav-item {
     }
 }
 
+/* About me */
+/* Add this after your existing styles */
+
+.personal-story {
+    background: white;
+    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.personal-story::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.story-image {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(255, 31, 142, 0.15);
+}
+
+.story-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 20px;
+    transition: transform 0.3s ease;
+}
+
+.story-image:hover img {
+    transform: scale(1.02);
+}
+
+.story-content {
+    padding: 2rem;
+}
+
+.story-content h2 {
+    margin-bottom: 2rem;
+    color: var(--primary);
+}
+
+.story-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.story-text:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 991.98px) {
+    .story-content {
+        padding: 2rem 0;
+        text-align: center;
+    }
+
+    .story-image {
+        margin-bottom: 2rem;
+    }
+}
+
+
 /* ========================== */
 /*       FEATURES SECTION     */
 /* ========================== */
@@ -907,7 +979,7 @@ footer::before {
 }
 
 .event-details h1 {
-    font-size: 2.5rem;
+    font-size: 2.2 rem;
     margin-bottom: 2rem;
     background: var(--gradient);
     -webkit-background-clip: text;

@@ -14,9 +14,11 @@ class UserProfile:
         languages_spoken: str = "",
         centers_of_interest: str = "",
         event_expectations: str = "",
-        activity_preferences: str = "",
+        perfect_outing_description: str = "",
         group_size_preference: str = "",
         dietary_restrictions: str = "",
+        music_preference: str = "",
+        fun_fact: str = "",
         is_certified: bool = False,
         consent_date: datetime = None,
         slug: str = ""
@@ -30,12 +32,15 @@ class UserProfile:
         self.languages_spoken = languages_spoken
         self.centers_of_interest = centers_of_interest
         self.event_expectations = event_expectations
-        self.activity_preferences = activity_preferences
+        self.perfect_outing_description = perfect_outing_description
         self.group_size_preference = group_size_preference
         self.dietary_restrictions = dietary_restrictions
+        self.music_preference = music_preference
+        self.fun_fact = fun_fact
         self.is_certified = is_certified
         self.consent_date = consent_date
-    
+        self.slug = slug
+
     def can_edit(self, user: User) -> bool:
         return self.user.username == user.username
 

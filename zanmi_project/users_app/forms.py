@@ -31,10 +31,19 @@ class UserProfileForm(forms.Form):
         label="What do you hope to get from these events?",
         widget=forms.Textarea(attrs={"rows": 3})
     )
-    activity_preferences = forms.CharField(
+    perfect_outing_description = forms.CharField(
         required=False,
-        label="Preferred activities",
+        label="Describe your perfect outing",
         widget=forms.Textarea(attrs={"rows": 3})
+    )
+    music_preference = forms.CharField(
+        required=False,
+        label="What kind of music do you enjoy?"
+    )
+    fun_fact = forms.CharField(
+        required=False,
+        label="A fun or unexpected fact about you",
+        widget=forms.Textarea(attrs={"rows": 2})
     )
     group_size_preference = forms.CharField(required=False, label="Preferred group size")
     dietary_restrictions = forms.CharField(required=False, label="Dietary restrictions")

@@ -206,7 +206,7 @@ def test_user_status_is_not_organizer(participant, event):
 def test_user_profile_creation():
     """
     GIVEN a domain User object
-    WHEN we create a UserProf ile with various fields
+    WHEN we create a UserProfile with various fields
     THEN all fields should be set correctly in-memory, with no DB involved.
     """
     user = User(username="john_doe")
@@ -220,13 +220,13 @@ def test_user_profile_creation():
         languages_spoken="French, English",
         centers_of_interest="Cooking, Painting",
         event_expectations="Meeting new friends",
-        activity_preferences="Sports, Food tours",
+        perfect_outing_description="A picnic with music and open conversations.",
         group_size_preference="Medium",
         dietary_restrictions="Vegetarian",
+        music_preference="Indie rock",
+        fun_fact="I once slept in 12 airports in one week.",
         is_certified=True,
         consent_date=datetime(2025, 1, 10, 14, 30),
-        # If you want to test slug generation logic, you can skip passing `slug`
-        # or pass an explicit slug. This is purely domain logic, not DB-based.
         slug="john_doe_slug"
     )
     assert profile.user == user
@@ -238,9 +238,11 @@ def test_user_profile_creation():
     assert profile.languages_spoken == "French, English"
     assert profile.centers_of_interest == "Cooking, Painting"
     assert profile.event_expectations == "Meeting new friends"
-    assert profile.activity_preferences == "Sports, Food tours"
+    assert profile.perfect_outing_description == "A picnic with music and open conversations."
     assert profile.group_size_preference == "Medium"
     assert profile.dietary_restrictions == "Vegetarian"
+    assert profile.music_preference == "Indie rock"
+    assert profile.fun_fact == "I once slept in 12 airports in one week."
     assert profile.is_certified is True
     assert profile.consent_date == datetime(2025, 1, 10, 14, 30)
 
@@ -248,8 +250,8 @@ def test_user_profile_creation():
 def test_user_profile_creation_without_avatar():
     """
     GIVEN a domain User object
-    WHEN we create a UserProf ile with various fields
-    THEN all fields should be set correctly in-memory, with no DB involved.
+    WHEN we create a UserProfile with no avatar provided
+    THEN the default avatar should be used, and all fields set correctly.
     """
     user = User(username="john_doe")
     profile = UserProfile(
@@ -261,13 +263,13 @@ def test_user_profile_creation_without_avatar():
         languages_spoken="French, English",
         centers_of_interest="Cooking, Painting",
         event_expectations="Meeting new friends",
-        activity_preferences="Sports, Food tours",
+        perfect_outing_description="A picnic with music and open conversations.",
         group_size_preference="Medium",
         dietary_restrictions="Vegetarian",
+        music_preference="Indie rock",
+        fun_fact="I once slept in 12 airports in one week.",
         is_certified=True,
         consent_date=datetime(2025, 1, 10, 14, 30),
-        # If you want to test slug generation logic, you can skip passing `slug`
-        # or pass an explicit slug. This is purely domain logic, not DB-based.
         slug="john_doe_slug"
     )
     assert profile.user == user
@@ -279,9 +281,11 @@ def test_user_profile_creation_without_avatar():
     assert profile.languages_spoken == "French, English"
     assert profile.centers_of_interest == "Cooking, Painting"
     assert profile.event_expectations == "Meeting new friends"
-    assert profile.activity_preferences == "Sports, Food tours"
+    assert profile.perfect_outing_description == "A picnic with music and open conversations."
     assert profile.group_size_preference == "Medium"
     assert profile.dietary_restrictions == "Vegetarian"
+    assert profile.music_preference == "Indie rock"
+    assert profile.fun_fact == "I once slept in 12 airports in one week."
     assert profile.is_certified is True
     assert profile.consent_date == datetime(2025, 1, 10, 14, 30)
 

@@ -245,7 +245,7 @@ def test_notify_host_and_participants_when_participant_posts(organizer, particip
     saved_recipients = {n.recipient.username for n in notification_repo.saved}
     assert sent_recipients == expected_recipients
     assert saved_recipients == expected_recipients
-    expected_message = f"A message has been posted for event {event.title} : {announcement.content}"
+    expected_message = f"A message has been posted : << {announcement.content} >>"
     for notif in gateway.sent_many + notification_repo.saved:
         assert notif.message == expected_message
         assert notif.sender == None
@@ -436,7 +436,9 @@ def test_create_user_profile_if_none_exists(participant):
         languages_spoken="french",
         centers_of_interest="foot",
         event_expectations="nothing",
-        activity_preferences="sport",
+        perfect_outing_description="drinks and music by the river",
+        music_preference="electronic",
+        fun_fact="I know how to juggle with knives",
         group_size_preference="10",
         dietary_restrictions="nuts",
         birth_date=date(1990, 5, 21),
@@ -452,10 +454,12 @@ def test_create_user_profile_if_none_exists(participant):
     assert created_profile.languages_spoken == "french"
     assert created_profile.centers_of_interest == "foot"
     assert created_profile.event_expectations == "nothing"
-    assert created_profile.activity_preferences == "sport"
+    assert created_profile.perfect_outing_description == "drinks and music by the river"
+    assert created_profile.music_preference == "electronic"
+    assert created_profile.fun_fact == "I know how to juggle with knives"
     assert created_profile.group_size_preference == "10"
     assert created_profile.dietary_restrictions == "nuts"
-    assert created_profile.is_certified == False
+    assert created_profile.is_certified is False
     assert created_profile.avatar == "avatars/john.jpg"
     assert stub_repo.save_calls == 1  # saved once
 

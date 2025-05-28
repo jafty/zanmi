@@ -19,13 +19,14 @@ class UserProfileDB(models.Model):
     languages_spoken = models.TextField(blank=True, null=True)
     centers_of_interest = models.TextField(blank=True, null=True)
     event_expectations = models.TextField(blank=True, null=True)
-    activity_preferences = models.TextField(blank=True, null=True)
     group_size_preference = models.CharField(max_length=100, blank=True, null=True)
     dietary_restrictions = models.TextField(blank=True, null=True)
     is_certified = models.BooleanField(default=False)
     consent_date = models.DateTimeField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(default=now)
-
+    perfect_outing_description = models.TextField(blank=True, null=True)
+    music_preference = models.CharField(max_length=100, blank=True, null=True)
+    fun_fact = models.TextField(blank=True, null=True)
     # Fields for Privacy Policy Consent
     privacy_policy_consent = models.BooleanField(default=False)
     privacy_policy_consent_date = models.DateTimeField(null=True, blank=True)

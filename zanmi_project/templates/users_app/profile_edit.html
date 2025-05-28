@@ -44,6 +44,10 @@
                     <label for="centers_of_interest" class="form-label">What are you interested in?</label>
                     {{ form.centers_of_interest|add_class:"form-control" }}
                 </div>
+                <div class="mb-3">
+                    <label for="fun_fact" class="form-label">A fun or unexpected fact about you</label>
+                    {{ form.fun_fact|add_class:"form-control" }}
+                </div>
 
                 <!-- Section 3: What You’re Looking For -->
                 <h3 class="section-title">3. What You’re Looking For</h3>
@@ -52,12 +56,16 @@
                     {{ form.event_expectations|add_class:"form-control" }}
                 </div>
                 <div class="mb-3">
-                    <label for="activity_preferences" class="form-label">Preferred activities</label>
-                    {{ form.activity_preferences|add_class:"form-control" }}
+                    <label for="perfect_outing_description" class="form-label">Describe your perfect outing</label>
+                    {{ form.perfect_outing_description|add_class:"form-control" }}
                 </div>
                 <div class="mb-3">
                     <label for="group_size_preference" class="form-label">Preferred group size</label>
                     {{ form.group_size_preference|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="music_preference" class="form-label">What kind of music do you enjoy?</label>
+                    {{ form.music_preference|add_class:"form-control" }}
                 </div>
 
                 <!-- Section 4: Trust & Accessibility -->

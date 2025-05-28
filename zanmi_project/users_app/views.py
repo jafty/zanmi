@@ -119,7 +119,9 @@ def profile_edit(request):
                 languages_spoken=data["languages_spoken"],
                 centers_of_interest=data["centers_of_interest"],
                 event_expectations=data["event_expectations"],
-                activity_preferences=data["activity_preferences"],
+                perfect_outing_description=data["perfect_outing_description"],
+                music_preference=data["music_preference"],
+                fun_fact=data["fun_fact"],
                 group_size_preference=data["group_size_preference"],
                 dietary_restrictions=data["dietary_restrictions"],
             )
@@ -133,7 +135,9 @@ def profile_edit(request):
             "languages_spoken": domain_profile.languages_spoken,
             "centers_of_interest": domain_profile.centers_of_interest,
             "event_expectations": domain_profile.event_expectations,
-            "activity_preferences": domain_profile.activity_preferences,
+            "perfect_outing_description": domain_profile.perfect_outing_description,
+            "music_preference": domain_profile.music_preference,
+            "fun_fact": domain_profile.fun_fact,
             "group_size_preference": domain_profile.group_size_preference,
             "dietary_restrictions": domain_profile.dietary_restrictions,
 

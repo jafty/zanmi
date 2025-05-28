@@ -26,7 +26,9 @@ class DjangoUserProfileRepository(UserProfileRepository):
             languages_spoken=db_profile.languages_spoken or "",
             centers_of_interest=db_profile.centers_of_interest or "",
             event_expectations=db_profile.event_expectations or "",
-            activity_preferences=db_profile.activity_preferences or "",
+            perfect_outing_description=db_profile.perfect_outing_description or "",
+            music_preference=db_profile.music_preference or "",
+            fun_fact=db_profile.fun_fact or "",
             group_size_preference=db_profile.group_size_preference or "",
             dietary_restrictions=db_profile.dietary_restrictions or "",
             is_certified=db_profile.is_certified,
@@ -48,7 +50,9 @@ class DjangoUserProfileRepository(UserProfileRepository):
         db_profile.languages_spoken = profile.languages_spoken
         db_profile.centers_of_interest = profile.centers_of_interest
         db_profile.event_expectations = profile.event_expectations
-        db_profile.activity_preferences = profile.activity_preferences
+        db_profile.perfect_outing_description = profile.perfect_outing_description
+        db_profile.music_preference = profile.music_preference
+        db_profile.fun_fact = profile.fun_fact
         db_profile.group_size_preference = profile.group_size_preference
         db_profile.dietary_restrictions = profile.dietary_restrictions
         db_profile.is_certified = profile.is_certified
