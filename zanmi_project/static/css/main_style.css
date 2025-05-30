@@ -527,9 +527,9 @@ li.nav-item {
 /* ========================== */
 
 .cta {
-  background:
-    linear-gradient(rgba(255, 105, 180, 0.6), rgba(255, 105, 180, 0.6)),
-    url('/static/images/picnic_blaze.png') center/cover no-repeat;
+    background:
+        linear-gradient(to bottom, rgba(255, 240, 245, 0.1) 0%, rgba(180, 100, 130, 0.5) 40%, rgba(80, 30, 60, 0.7) 100%),
+        url('/static/images/picnic-blaze.jpg') center/cover no-repeat;
     color: white;
     text-align: center;
     position: relative;
@@ -537,6 +537,12 @@ li.nav-item {
     padding: 6rem 0;
     margin: 0;
 }
+
+.cta h2,
+.cta p {
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
 
 .cta-subtext {
     color: #666;
