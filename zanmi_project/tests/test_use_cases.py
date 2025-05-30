@@ -320,7 +320,23 @@ def test_get_upcoming_events_for_user(participant):
     p4 = Participation(participant, past, status="REJECTED")
     repo = StubParticipationRepository(stored_user_participations=[p1, p2, p3, p4])
     upcoming_participations = get_upcoming_participations(user_id=42, repo=repo, now=now)
-    assert upcoming_participations
+    assert upcoming_participations == [upcoming1, upcoming2]
+
+
+def test_get_pending_events_for_user(participant):
+    """
+    GIVEN a repository with participations
+    WHEN we call get_pending_events
+    THEN it returns only events that are pending
+    """
+    
+    accepted_event = Event("Accepted Event", "Toulouse", datetime(2025, 6, 1), participant, price=10)
+    pending_event = Event("Pending Event", "Toulouse", datetime(2025, 7, 1), participant, price=10)
+    accepted_participation = Participation(participant, accepted_event, status="ACCEPTED")
+    pending_participation = Participation(participant, pending_event, status="PENDING")
+    repo = StubParticipationRepository(stored_user_participations=[accepted_participation, pending_participation])
+    pending_participations = get_pending_participations_for_user(user_id=42, repo=repo)
+    assert pending_participations == [pending_event]
 
 
 def test_get_user_participation(participant, event):

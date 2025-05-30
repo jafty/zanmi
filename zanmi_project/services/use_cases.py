@@ -146,6 +146,10 @@ def get_upcoming_participations(user_id, repo, now):
     participations = repo.get_participations_by_user(user_id)
     return [p.event for p in participations if p.status == "ACCEPTED" and not p.event.is_past(now)]
 
+def get_pending_participations_for_user(user_id, repo):
+    participations = repo.get_participations_by_user(user_id)
+    return [p.event for p in participations if p.status == "PENDING"]
+
 
 def get_past_participations(user_id, repo, now):
     participations = repo.get_participations_by_user(user_id)

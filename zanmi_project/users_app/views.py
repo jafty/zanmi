@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from .forms import UserProfileForm, CustomUserCreationForm, UsernameForm
 from django.contrib.auth.decorators import login_required
 from domain.user import User as DomainUser
-from services.use_cases import get_profile_detail, create_or_update_user_profile, get_upcoming_participations, get_past_participations
+from services.use_cases import get_profile_detail, create_or_update_user_profile, get_upcoming_participations, get_past_participations, get_pending_participations, get_pending_participations_for_user
 from .repositories import DjangoUserProfileRepository
 from events_app.repositories import DjangoParticipationRepository, DjangoEventRepository
 from datetime import date, datetime
@@ -79,6 +79,9 @@ def profile(request, username=None):
     past_events = get_past_participations(target_user_id, participation_repo, now)
     for event in past_events:
         event.id = event_repo.get_event_id(event)
+    pending_events = get_pending_participations_for_user(target_user_id, participation_repo)
+    for event in pending_events:
+        event.id = event_repo.get_event_id(event)
     events_attended_count = len(past_events)
     upcoming_events_count = len(upcoming_events)
     return render(request, "users_app/profile.html", {
@@ -88,6 +91,7 @@ def profile(request, username=None):
         "interest_list": interest_list,
         "upcoming_events": upcoming_events,
         "past_events": past_events,
+        "pending_events": pending_events,
         "events_attended_count": events_attended_count,
         "upcoming_events_count": upcoming_events_count,
     })
