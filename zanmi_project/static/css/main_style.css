@@ -540,10 +540,12 @@ li.nav-item {
 
 .cta h2 {
     font-size: 2.2rem;
+    font-weight: 700;
 }
 
 .cta p {
     font-size: 1.15rem;
+    font-weight: 500;
 }
 
 .cta h2,
