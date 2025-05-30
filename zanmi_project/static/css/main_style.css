@@ -528,7 +528,7 @@ li.nav-item {
 
 .cta {
     background:
-        linear-gradient(to bottom, rgba(255, 240, 245, 0.1) 0%, rgba(180, 100, 130, 0.5) 40%, rgba(80, 30, 60, 0.7) 100%),
+        linear-gradient(to bottom, rgba(255, 240, 245, 0.1) 0%, rgb(180 100 130 / 76%) 40%, rgba(80, 30, 60, 0.7) 100%),
         url('/static/images/picnic_blaze.png') center/cover no-repeat;
     color: white;
     text-align: center;
