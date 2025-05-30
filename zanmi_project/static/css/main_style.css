@@ -527,9 +527,9 @@ li.nav-item {
 
 .cta {
     background:
-        linear-gradient(rgba(123, 0, 80, 0.7), rgba(50, 0, 80, 0.9)),
-        url('/static/images/toulouse-by-night.jpg') center/cover no-repeat;
-    color: white;
+        linear-gradient(rgba(255, 182, 193, 0.7), rgba(255, 255, 255, 0.6)),
+        url('/static/images/picnic_blaze.png') center/cover no-repeat;
+    color: var(--text); /* devient noir */
     text-align: center;
     position: relative;
     overflow: hidden;
