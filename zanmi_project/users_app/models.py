@@ -41,6 +41,8 @@ class UserProfileDB(models.Model):
     event_invitation_consent = models.BooleanField(default=False)
     event_invitation_consent_date = models.DateTimeField(null=True, blank=True)
     event_invitation_consent_text = models.TextField(blank=True, null=True)
+    # Certification selfie 
+    certification_selfie = models.ImageField(upload_to='certification_selfies/', blank=True, null=True)
 
 
     def save(self, *args, **kwargs):

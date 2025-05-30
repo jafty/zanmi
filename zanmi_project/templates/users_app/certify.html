@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify Your Profile - Zanmi{% endblock %}
+
+{% block extra_head %}
+<style>
+    .verify-container {
+        min-height: 100vh;
+        background: var(--pink-light);
+        padding: 120px 0 60px;
+    }
+
+    .verify-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(255, 31, 142, 0.15);
+    }
+
+    .verify-steps {
+        margin: 2rem 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .verify-steps li {
+        margin-bottom: 1rem;
+        padding-left: 2rem;
+        position: relative;
+    }
+
+    .verify-steps li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+    }
+
+    .upload-area {
+        border: 2px dashed rgba(255, 31, 142, 0.3);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        margin: 2rem 0;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .upload-area:hover {
+        border-color: var(--primary);
+        background: var(--pink-light);
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    .submit-btn {
+        background: var(--gradient);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        width: 100%;
+        transition: all 0.3s;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 31, 142, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="verify-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="verify-card">
+                    <h1 class="pixel-text text-center mb-4">Verify Your Profile</h1>
+                    <p class="text-center mb-4">Take a selfie holding a paper with your username to verify your identity.</p>
+                    
+                    <ul class="verify-steps">
+                        <li>Write "<strong>{{ user.username }}</strong>" on a piece of paper</li>
+                        <li>Take a clear selfie while holding the paper</li>
+                        <li>Make sure both your face and the text are visible</li>
+                    </ul>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="upload-area" onclick="document.getElementById('selfie').click()">
+                            <div class="upload-icon">📸</div>
+                            <p class="mb-0">Click to upload your verification photo</p>
+                            <input type="file" id="selfie" name="certification_selfie" accept="image/*" capture="user" style="display: none" required>
+                        </div>
+
+                        <button type="submit" class="primary-btn w-100">Submit for Verification</button>
+                    </form>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} mt-3">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('selfie').addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            const fileName = e.target.files[0].name;
+            document.querySelector('.upload-area p').textContent = `Selected: ${fileName}`;
+        }
+    });
+</script>
+{% endblock %}

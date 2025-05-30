@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import UserProfileDB
 from django import forms
 
 
@@ -80,3 +81,9 @@ class CustomUserCreationForm(UserCreationForm):
         if email and User.objects.filter(email=email).exists():
             raise forms.ValidationError("This email is already used.")
         return email
+
+
+class CertificationSelfieForm(forms.ModelForm):
+    class Meta:
+        model = UserProfileDB
+        fields = ['certification_selfie']

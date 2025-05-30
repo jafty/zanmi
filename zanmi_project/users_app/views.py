@@ -1,6 +1,6 @@
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
-from .forms import UserProfileForm, CustomUserCreationForm, UsernameForm
+from .forms import UserProfileForm, CustomUserCreationForm, UsernameForm, CertificationSelfieForm
 from django.contrib.auth.decorators import login_required
 from domain.user import User as DomainUser
 from services.use_cases import get_profile_detail, create_or_update_user_profile, get_upcoming_participations, get_past_participations, get_pending_participations, get_pending_participations_for_user
@@ -8,6 +8,7 @@ from .repositories import DjangoUserProfileRepository
 from events_app.repositories import DjangoParticipationRepository, DjangoEventRepository
 from datetime import date, datetime
 from django.utils.timezone import now
+from .models import UserProfileDB
 
 
 def register_view(request):
@@ -33,18 +34,20 @@ def register_view(request):
                 is_certified=False
             )
             now_time = now()
+            db_profile = UserProfileDB.objects.get(user=user)
             if form.cleaned_data.get('privacy_policy_consent'):
-                profile.privacy_policy_consent = True
-                profile.privacy_policy_consent_date = now_time
-                profile.privacy_policy_consent_text = "I agree to the processing of my data as outlined in the Privacy Policy." # Store the exact text
+                db_profile.privacy_policy_consent = True
+                db_profile.privacy_policy_consent_date = now_time
+                db_profile.privacy_policy_consent_text = "I agree to the processing of my data as outlined in the Privacy Policy." # Store the exact text
             if form.cleaned_data.get('terms_of_service_consent'):
-                profile.terms_of_service_consent = True
-                profile.terms_of_service_consent_date = now_time
-                profile.terms_of_service_consent_text = "I agree to the Terms of Service." # Store the exact text
+                db_profile.terms_of_service_consent = True
+                db_profile.terms_of_service_consent_date = now_time
+                db_profile.terms_of_service_consent_text = "I agree to the Terms of Service." # Store the exact text
             if form.cleaned_data.get('event_invitation_consent'):
-                profile.event_invitation_consent = True
-                profile.event_invitation_consent_date = now_time
-                profile.event_invitation_consent_text = "I would like to receive email invitations to events." # Store the exact text
+                db_profile.event_invitation_consent = True
+                db_profile.event_invitation_consent_date = now_time
+                db_profile.event_invitation_consent_text = "I would like to receive email invitations to events." # Store the exact text
+            db_profile.save()
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect("profile_edit") # Redirect to profile edit or a welcome page
     else:
@@ -53,7 +56,7 @@ def register_view(request):
     return render(request, "users_app/register.html", {"form": form})
 
 @login_required
-def profile(request, username=None):
+def db_profile(request, username=None):
     repo = DjangoUserProfileRepository()
     participation_repo = DjangoParticipationRepository()
     if not username or username == request.user.username:
@@ -192,3 +195,17 @@ def complete_social_signup(request):
     else:
         form = UsernameForm(instance=user)
     return render(request, 'users_app/complete_signup.html', {'form': form})
+
+
+@login_required
+def submit_certification_selfie(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = CertificationSelfieForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            # (optionnel) Message flash ou notification
+            return redirect('profile')
+    else:
+        form = CertificationSelfieForm(instance=profile)
+    return render(request, 'users_app/certify.html', {'form': form})

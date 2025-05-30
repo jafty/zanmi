@@ -41,7 +41,7 @@
 
                 {% if profile.centers_of_interest %}
                 <div class="profile-section">
-                    <h2 class="pixel-text"2>Things I Enjoy</h2>
+                    <h2 class="pixel-text">Things I Enjoy</h2>
                     <div class="interests">
                         {% for interest in interest_list %}
                         <span class="interest-tag">{{ interest }}</span>
@@ -159,9 +159,14 @@
                         <ul class="verification-list">
                             <li>✅ Profile completed</li>
                             {% if profile.is_certified %}
-                            <li>✅ ID Verified</li>
+                                <li>✅ ID Verified</li>
+                            {% elif can_edit %}
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>❌ Not ID Verified</span>
+                                    <a href="{% url 'verify_profile' %}" class="verify-now-btn">Verify Now</a>
+                                </li>
                             {% else %}
-                            <li>❌ Not ID Verified</li>
+                                <li>❌ Not ID Verified</li>
                             {% endif %}
                             <li>🎂 Age visible</li>
                         </ul>
@@ -171,4 +176,22 @@
         </div>
     </div>
 </section>
+
+<style>
+.verify-now-btn {
+    background: var(--gradient);
+    color: white;
+    text-decoration: none;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+}
+
+.verify-now-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(255, 31, 142, 0.2);
+    color: white;
+}
+</style>
 {% endblock %}
