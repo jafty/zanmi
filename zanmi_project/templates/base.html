@@ -29,7 +29,7 @@
     <!-- NAVIGATION (modifié pour correspondre exactement à ton design original) -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/">
+            <a aria-label="Home - Zanmi logo" class="navbar-brand d-flex align-items-center" href="/">
                 <img src="{% static 'images/logo.png' %}" alt="Zanmi" class="me-2">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -55,17 +55,17 @@
                     <li class="nav-item me-lg-3">
                         <form method="POST" action="{% url 'logout' %}" class="m-0">
                             {% csrf_token %}
-                            <button type="submit" class="nav-link btn btn-link" style="color: inherit; text-decoration: none;">
+                            <button type="submit" class="nav-link btn btn-link" style="color: inherit; text-decoration: none;" aria-label="Log out from your account">
                                 Log Out
                             </button>
                         </form>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'featured_event' %}" class="nav-link download-btn">✨ Our first hangout ✨</a>
+                        <a href="{% url 'featured_event' %}" aria-label="Join the featured hangout event" class="nav-link download-btn">✨ Our first hangout ✨</a>
                     </li>
                     {% else %}
                     <li class="nav-item ms-lg-3">
-                        <a href="{% url 'register' %}" class="nav-link download-btn">Join us</a>
+                        <a href="{% url 'register' %}" aria-label="Register on Zanmi" class="nav-link download-btn">Join us</a>
                     </li>
                     {% endif %}
                 </ul>
