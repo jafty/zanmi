@@ -1,5 +1,6 @@
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from .forms import UserProfileForm, CustomUserCreationForm, UsernameForm, CertificationSelfieForm
 from django.contrib.auth.decorators import login_required
 from domain.user import User as DomainUser
@@ -9,27 +10,42 @@ from events_app.repositories import DjangoParticipationRepository, DjangoEventRe
 from datetime import date, datetime
 from django.utils.timezone import now
 from .models import UserProfileDB
+import requests
 
+
+def is_human(recaptcha_response):
+    secret = '6LeSMFErAAAAAJEMn-0G2niKfJaWMwZ4jYkgrzPr'  # à stocker proprement dans les settings
+    data = {
+        'secret': secret,
+        'response': recaptcha_response
+    }
+    try:
+        r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=5)
+        result = r.json()
+        return result.get('success', False)
+    except Exception as e:
+        return False
+    
 
 def register_view(request):
     if request.user.is_authenticated:
-        return redirect("featured_event") # Redirect to a relevant page
-
+        return redirect("featured_event")
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        if not is_human(recaptcha_response):
+            messages.error(request, "Please complete the reCAPTCHA challenge.")
+            return render(request, "users_app/register.html", {"form": form})
         if form.is_valid():
-            user = form.save(commit=False) # Don't save the user yet
-            # Handle password saving manually since we took it out of Meta fields
+            user = form.save(commit=False)
             user.set_password(form.cleaned_data['password1'])
-            user.save() # Now save the user
-
+            user.save()
             repo = DjangoUserProfileRepository()
-            # Assuming create_or_update_user_profile handles creating the profile if it doesn't exist
             create_or_update_user_profile(
                 repo=repo,
                 username=user.username,
                 user_id=user.id,
-                city="",  # or default values
+                city="",
                 country="",
                 is_certified=False
             )
@@ -38,22 +54,23 @@ def register_view(request):
             if form.cleaned_data.get('privacy_policy_consent'):
                 db_profile.privacy_policy_consent = True
                 db_profile.privacy_policy_consent_date = now_time
-                db_profile.privacy_policy_consent_text = "I agree to the processing of my data as outlined in the Privacy Policy." # Store the exact text
+                db_profile.privacy_policy_consent_text = "I agree to the processing of my data as outlined in the Privacy Policy."
             if form.cleaned_data.get('terms_of_service_consent'):
                 db_profile.terms_of_service_consent = True
                 db_profile.terms_of_service_consent_date = now_time
-                db_profile.terms_of_service_consent_text = "I agree to the Terms of Service." # Store the exact text
+                db_profile.terms_of_service_consent_text = "I agree to the Terms of Service."
             if form.cleaned_data.get('event_invitation_consent'):
                 db_profile.event_invitation_consent = True
                 db_profile.event_invitation_consent_date = now_time
-                db_profile.event_invitation_consent_text = "I would like to receive email invitations to events." # Store the exact text
+                db_profile.event_invitation_consent_text = "I would like to receive email invitations to events."
             db_profile.save()
+
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return redirect("profile_edit") # Redirect to profile edit or a welcome page
+            return redirect("profile_edit")
     else:
         form = CustomUserCreationForm()
-
     return render(request, "users_app/register.html", {"form": form})
+
 
 @login_required
 def db_profile(request, username=None):
