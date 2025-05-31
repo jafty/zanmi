@@ -11,10 +11,11 @@ from datetime import date, datetime
 from django.utils.timezone import now
 from .models import UserProfileDB
 import requests
+from django.conf import settings
 
 
 def is_human(recaptcha_response):
-    secret = '6LeSMFErAAAAAJEMn-0G2niKfJaWMwZ4jYkgrzPr'  # à stocker proprement dans les settings
+    secret = settings.RECAPTCHA_SECRET_KEY
     data = {
         'secret': secret,
         'response': recaptcha_response
