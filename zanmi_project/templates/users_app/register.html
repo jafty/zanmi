@@ -12,16 +12,24 @@
             <h1 class="pixel-text text-center mb-4">Join Zanmi</h1>
 
             {% if form.errors %}
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        {% for field, errors in form.errors.items %}
-                            {% for error in errors %}
-                                <li>{{ field|capfirst }}: {{ error }}</li>{# Added field name for clarity #}
-                            {% endfor %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field|capfirst }}: {{ error }}</li>{# Added field name for clarity #}
                         {% endfor %}
-                    </ul>
-                </div>
+                    {% endfor %}
+                </ul>
+            </div>
             {% endif %}
+            {% if messages %}
+            <div class="mb-3">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
 
             <form method="post" class="p-4 border rounded shadow-sm bg-white">
                 {% csrf_token %}
