@@ -103,6 +103,13 @@ h3 {
     text-decoration: underline;
 }
 
+.g-recaptcha {
+  width: 100% !important;
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
 .text-center a:hover {
     color: #ff69b4;
 }
