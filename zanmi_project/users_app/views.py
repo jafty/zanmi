@@ -28,6 +28,7 @@ def is_human(recaptcha_response):
     
 
 def register_view(request):
+    print("Request method:", request.method)
     if request.user.is_authenticated:
         return redirect("featured_event")
     if request.method == "POST":
