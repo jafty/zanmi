@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Zanmi - Private Gatherings with <br>Locals & Expats{% endblock %}
+{% block title %}Zanmi - Private Gatherings with Locals & Expats{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
@@ -9,19 +9,28 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="pixel-text">Private Hangouts<br>for Locals & Expats<br>in Toulouse</h1>
-                <p>Join small, hosted events designed for locals and travelers to meet in Toulouse, share stories, play games, and enjoy genuine moments together.</p>
-                <p class="mt-3"><strong>No pressure, no awkward vibes — just good people and limited spots.</strong></p>
-
-                <a aria-label="Join the next one" href="{% url 'register' %}" class="primary-btn  mt-4">Join the next one</a>
+                <h1>Private Hangouts<br>for Locals & Expats<br>in Toulouse</h1>
+                <p>Picnics, music-filled walks, fun little games... Chill moments between French people and curious expats who want to meet and share.</p>
+                <p class="mt-3"><strong>No pressure, no awkward vibes — just real conversations with people who feel like you.</strong></p>
+                <a aria-label="Join the next one" href="{% url 'register' %}" class="primary-btn mt-4">Join our first picnic</a>
             </div>
             <div class="col-lg-6 text-center">
-                <div class="hero-image ">
+                <div class="hero-image">
                     <div class="hero-circle floating">
                         <picture>
-                            <source media="(max-width: 768px)" srcset="{% static 'images/picnic_anle_mwen_small.webp' %}">
-                            <img src="{% static 'images/picnic_anle_mwen.webp' %}" alt="Event" width="1600" height="900">
+                          <source media="(max-width: 768px)" srcset="{% static 'images/picnic_anle_mwen_small.webp' %}" type="image/webp">
+                          <img
+                            src="{% static 'images/picnic_anle_mwen.webp' %}"
+                            alt="Événement"
+                            width="1600"
+                            height="900"
+                            loading="eager"
+                            fetchpriority="high"
+                            decoding="async"
+                          />
                         </picture>
+
+
                     </div>
                 </div>
             </div>
@@ -29,77 +38,6 @@
     </div>
 </section>
 
-<!-- Personal Story Section -->
-<section class="personal-story">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <div class="story-image">
-                    <img src="{% static 'images/japhet.webp' %}" loading="lazy" alt="Founder" />
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="story-content">
-                    <h2 class="pixel-text">Bienvenue sur Zanmi</h2>
-                    <p class="story-text">
-                        Salut, my name is Japhet :)
-                    </p>
-
-                    <p class="story-text">
-                        As someone who's moved to different cities and countries, I know firsthand how challenging it can be to build meaningful connections in a new place. Traditional meetups often felt too big and impersonal, while one-on-one meetings could be awkward or intimidating.
-                    </p>
-                    <p class="story-text">
-                        That's why I created Zanmi – to provide a space where like-minded people from all over the world can meet naturally in Toulouse, without the awkwardness. Our small-group format and carefully planned activities create the perfect environment for genuine connections to flourish.
-                    </p>
-                    <p class="story-text">
-                        <b style="color: var(--primary);">Zanmi means ‘friend’ in Caribbean Creole.</b><br>I chose that name because it reminds me that this is about real connections — not followers, not matches. And that's what we're up to: just good people meeting up.<br /><br />So whether you're a local looking to expand your international circle or a newcomer seeking to build authentic connections, Zanmi is designed to make meeting people feel natural, fun, and meaningful.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Features Section -->
-<section class="features">
-    <div class="container">
-        <h2 class="pixel-text">Getting started is easy</h2>
-        <div class="row g-4">
-            <div class="col-lg-3 col-md-6">
-                <div class="feature-card">
-                    <div class="feature-icon">📝</div>
-                    <h3>Sign up fast</h3>
-                    <p>Create an account in seconds. No fluff, no fuss.</p>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6">
-                <div class="feature-card">
-                    <div class="feature-icon">👤</div>
-                    <h3>Set up your profile</h3>
-                    <p>Show your vibe through a few fun questions. It helps us match the right people together.</p>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6">
-                <div class="feature-card">
-                    <div class="feature-icon">✅</div>
-                    <h3>Get selected & connect</h3>
-                    <p>Once accepted, you get the secret location and access to a private chat — before and after the event.</p>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6">
-                <div class="feature-card">
-                    <div class="feature-icon">🎉</div>
-                    <h3>Show up & enjoy</h3>
-                    <p>Come as you are. You’ll meet chill people and share a good time together — no pressure.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
 
 <!-- About Section -->
 <section class="about">
@@ -109,10 +47,43 @@
                 <img src="{% static 'images/new-friends.webp' %}" loading="lazy" class="about-img floating" alt="About Zanmi">
             </div>
             <div class="col-lg-6">
-                <h2 class="pixel-text">Meet people, skip the <br>awkward small talk</h2>
-                <p>Zanmi is all about real connections — no big crowds, no forced conversations. Just relaxed outings with kind locals, expats, and travelers. Our hosts make it easy to dive in and enjoy the moment. 
-                <strong>Spots are limited — not by design, just by vibe.</strong></p>
-                <a aria-label="Join us" href="{% url 'register' %}" class="primary-btn  mt-4">Join us</a>
+                <h2>Meet people who vibe like you</h2>
+                <p>Zanmi is a series of small, human-centered gatherings. Every group is built based on profiles, so the people, energy, and intentions all align.</p>
+                <p>At each event, a host is there to welcome everyone, break the ice, and keep the good vibes flowing.</p>
+                <a aria-label="Join us" href="{% url 'register' %}" class="primary-btn mt-4">Join us</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2>Join us in 3 simple steps</h2>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Create your profile</h3>
+                    <p>It only takes 5 minutes. We'll ask a few questions to help you feel at home in the group that fits you best.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <h3>Pick an event</h3>
+                    <p>Browse the upcoming hangouts and request to join the ones that match your vibe — picnics, walks, outdoor games...
+                    The host makes sure the group dynamic fits your profile, then sends all the details.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">🎉</div>
+                    <h3>Meet your future people</h3>
+                    <p>Join the other attendees at the secret location, and have fun! You'll also get access to a private group space to connect anonymously with your host and the other participants — before and after the event.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -120,66 +91,91 @@
 
 <section class="cta">
     <div class="container text-center">
-        <h2 class="pixel-text">Next Hangout:<br>Picnic & Chill #1</h2>
+        <h2>Next Hangout:<br>Picnic & Chill #1</h2>
         <p class="mt-3">
-            Ready to meet cool people and vibe under the sun? 🍉☀️<br>
-            Zanmi's launching its very first gathering: a relaxed picnic with good music, snacks, and surprise drinks in a chill Toulouse park.<br>
-            Just sign up, answer a few quick questions, and you might get an invite 🍹
-            <br><br>
-            No pressure, no awkwardness — just cool humans, laid-back conversations, and good energy.
+            Ready for a laid-back afternoon in the sun? 🍉☀️<br>
+            Join our first event: good music, snacks, and surprise drinks in a beautiful Toulouse park.
         </p>
-
-        <a aria-label="Sign up now" href="{% url 'register' %}" class="primary-btn mt-4">Sign up now</a>
+        <p>
+            We're building a group of 20 awesome people, carefully matched to make sure the vibes, openness, and interests align.
+        </p>
+        <a aria-label="Request to join" href="{% url 'register' %}" class="primary-btn mt-4">Count me in</a>
 
         <p style="color: #a00057; font-weight: 600; margin-top: 25px;">
-            ⚠️ Only 20 spots — selected manually, not by algorithm.
+            ⚠️ Limited to 20 people to keep it meaningful and personal
         </p>
 
-
         <div class="party-container">
-            <div class="party-icon pink">
-                <img loading="lazy" src="https://api.iconify.design/noto:cocktail-glass.svg" alt="Cocktail" class="floating" />
-            </div>
-            <div class="party-icon blue">
-                <img loading="lazy" src="https://api.iconify.design/noto:party-popper.svg" alt="Party" class="floating" />
-            </div>
+            <!-- Your existing party icons -->
         </div>
     </div>
 </section>
 
-
-<!-- Why Join Zanmi Section -->
+<!-- Why Join Zanmi Section - Redesigned with alternating layout -->
 <section class="why-zanmi">
     <div class="container">
-        <h2 class="pixel-text text-center">Why Join Zanmi?</h2>
+        <h2 class="text-center">Why people love Zanmi</h2>
 
-        <div class="row g-4">
-            <div class="col-lg-4">
-                <div class="reason-card">
-                    <img loading="lazy" src="{% static 'images/friends_cultures.webp' %}" alt="Global Community" class="reason-img">
-                    <h3>Make Friends Across Cultures</h3>
-                    <p>Meet amazing people from all over the world in a welcoming and inclusive space. Great conversations, no pressure.</p>
-                </div>
+        <!-- First reason - Image on left, text on right -->
+        <div class="reason-section">
+            <div class="reason-image">
+                <img loading="lazy" src="{% static 'images/friends_cultures.webp' %}" alt="Global Community" class="reason-img">
             </div>
-            <div class="col-lg-4">
-                <div class="reason-card">
-                    <img loading="lazy" src="{% static 'images/real_discussion.jpg' %}" alt="Real Conversations" class="reason-img">
-                    <h3>Real Conversations</h3>
-                    <p>No need for small talk — our hosts make it easy to connect in meaningful ways through playful activities and shared experiences.</p>
-                </div>
+            <div class="reason-content">
+                <h3>Borderless Friendships</h3>
+                <p>Whether you're from Toulouse or halfway across the world, Zanmi brings people together — without the awkwardness.</p>
             </div>
-            <div class="col-lg-4">
-                <div class="reason-card">
-                    <img src="{% static 'images/safety.webp' %}" alt="Safe Space" class="reason-img">
-                    <h3>Stay Connected Safely</h3>
-                    <p>Our anonymous chat system lets you build lasting connections on your terms. Keep in touch with the people you click with, while maintaining your privacy and comfort level.</p>
-                </div>
+        </div>
+
+        <!-- Second reason - Image on right, text on left -->
+        <div class="reason-section reverse">
+            <div class="reason-image">
+                <img loading="lazy" src="{% static 'images/real_discussion.jpg' %}" alt="Real Conversations" class="reason-img">
+            </div>
+            <div class="reason-content">
+                <h3>Conversations that matter</h3>
+                <p>Because groups are curated and guided by a host, you skip the small talk and dive into real moments that flow naturally.</p>
+            </div>
+        </div>
+
+        <!-- Third reason - Image on left, text on right -->
+        <div class="reason-section">
+            <div class="reason-image">
+                <img loading="lazy" src="{% static 'images/safety.webp' %}" alt="Safe Space" class="reason-img">
+            </div>
+            <div class="reason-content">
+                <h3>Safe & relaxed atmosphere</h3>
+                <p>Each gathering is led by a thoughtful host, so you feel welcomed, respected, and free to just be yourself.</p>
             </div>
         </div>
     </div>
 </section>
 
-
-
+<!-- Personal Story Section (moved to end) -->
+<section class="personal-story">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="story-image">
+                    <img loading="lazy" src="{% static 'images/japhet.webp' %}" loading="lazy" alt="Founder" />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="story-content">
+                    <h2>The story behind Zanmi</h2>
+                    <p class="story-text">
+                        Hey, I'm Japhet :) Having lived in different cities and countries, I know how hard it can be to meet people and feel truly connected.
+                    </p>
+                    <p class="story-text">
+                        That's why I started Zanmi (which means "friend" in Caribbean Creole) — to create an easy, fun way to meet new people in Toulouse, without weird apps or forced meetups.
+                    </p>
+                    <p class="story-text">
+                        Now we host small hangouts designed to help locals and expats connect naturally, through shared experiences in a warm and welcoming setting.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 {% endblock %}
